@@ -34,11 +34,11 @@ public class Gene {
 		applet.rotate(angle);
 		applet.rectMode(PApplet.CENTER);
 		applet.fill(type.getColour()[1]);
-		applet.rect(0, 0, width, height, 5);
+		applet.rect(0, 0, width, height);
 		applet.fill(type.getColour()[0]);
-		applet.textSize(6);
+		//applet.textSize(6);
 		applet.rotate(PApplet.HALF_PI);
-		applet.text(type.toString(), -3, 2);
+		//applet.text(type.toString(), -3, 2);
 		applet.noFill();
 		if (selected) {
 			applet.rect(0, 0, width + 2, height + 2);
@@ -48,6 +48,10 @@ public class Gene {
 	
 	public GeneType getType() {
 		return type;
+	}
+	
+	public Gene copy() {
+		return new Gene(this.type);
 	}
 	
 	public void select() {

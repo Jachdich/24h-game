@@ -34,8 +34,18 @@ public class Nucleus {
 		
 		switch (genes.get(headPos).getType()) {
 		case NONE: break;
-		case REPAIR_MEMBRANE: this.parent.membraneHealth += 1; break;
+		case REPAIR_MEMBRANE: break; //this.parent.membraneHealth += 1; break;
 		case DIVIDE: this.parent.divide(); break;
+		case COPY_GENE_INTO_RNA:
+			break;
+		case COPY_RNA_INTO_GENE:
+			break;
+		case INSERT_GENE_INTO_GENOME:
+			break;
+		case PRODUCE_ATP:
+			break;
+		default:
+			break;
 		}
 		
 		headPos += 1;
@@ -53,8 +63,11 @@ public class Nucleus {
 	
 	public Nucleus copy() {
 		Nucleus n = new Nucleus(parent);
-		n.genes = new ArrayList<>(this.genes);
-		//TODO headPos?
+		n.genes = new ArrayList<Gene>();
+		for (Gene g : this.genes) {
+			n.genes.add(g.copy());
+		}
+		n.headPos = headPos;
 		return n;
 	}
 
