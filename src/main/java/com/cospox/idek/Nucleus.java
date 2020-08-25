@@ -12,7 +12,7 @@ public class Nucleus {
 	public Nucleus(Cell parent) {
 		genes.add(new Gene(GeneType.NONE));
 		genes.add(new Gene(GeneType.REPAIR_MEMBRANE));
-		genes.add(new Gene(GeneType.DIVIDE));
+		genes.add(new Gene(GeneType.DIVIDE_UNTIL));
 		genes.add(new Gene(GeneType.PRODUCE_ATP));
 		genes.add(new Gene(GeneType.COPY_GENE_INTO_RNA));
 		genes.add(new Gene(GeneType.COPY_RNA_INTO_GENE));
@@ -34,8 +34,12 @@ public class Nucleus {
 		
 		switch (genes.get(headPos).getType()) {
 		case NONE: break;
-		case REPAIR_MEMBRANE: break; //this.parent.membraneHealth += 1; break;
-		case DIVIDE: this.parent.divide(); break;
+		case REPAIR_MEMBRANE:
+			this.parent.membraneHealth = 
+			(this.parent.membraneHealth + (10 - this.parent.membraneHealth) * 0.8f) % 10;
+			break;
+		case DIVIDE: this.parent.divide(false); break;
+		case DIVIDE_UNTIL: this.parent.divide(true); break;
 		case COPY_GENE_INTO_RNA:
 			break;
 		case COPY_RNA_INTO_GENE:
@@ -52,11 +56,11 @@ public class Nucleus {
 		headPos %= genes.size();
 	}
 	
-	public void draw(PApplet applet, PVector pos) {
-		//applet.circle(pos.x, pos.y, 32);
+	public void draw(PApplet applet, PVector pos, Cam cam) {
+		applet.circle(pos.x * cam.zoom + cam.translate.x, pos.y * cam.zoom + cam.translate.y, 32 * cam.zoom);
 		float angle = 0;
 		for (Gene g : genes) {
-			g.draw(applet, PVector.add(pos, PVector.fromAngle(angle).mult(20)), 20 * PApplet.TWO_PI / genes.size() / 1.1f, angle);
+			g.draw(applet, PVector.add(pos, PVector.fromAngle(angle).mult(20)), 20 * PApplet.TWO_PI / genes.size() / 1.1f, angle, cam);
 			angle += PApplet.TWO_PI / genes.size();
 		}
 	}

@@ -13,7 +13,7 @@ public class Virus extends ColidableCircle {
 		this.rad = 15;
 	}
 	
-	public void draw(PApplet applet, ArrayList<ColidableCircle> objs) {
-		super.draw(applet, objs);
+	public void draw(PApplet applet, ArrayList<ColidableCircle> objs, Cam cam) {
+		super.draw(applet, objs, cam, true);
 	}
 }

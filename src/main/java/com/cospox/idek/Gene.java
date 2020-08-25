@@ -7,6 +7,7 @@ public class Gene {
 	private GeneType type;
 	private static int width = 10;
 	private boolean selected = false;
+	int data = 0;
 	public Gene(GeneType type) {
 		this.type = type;
 	}
@@ -28,20 +29,20 @@ public class Gene {
 		return col;
 	}*/
 	
-	public void draw(PApplet applet, PVector pos, float height, float angle) {
+	public void draw(PApplet applet, PVector pos, float height, float angle, Cam cam) {
 		applet.pushMatrix();
-		applet.translate(pos.x, pos.y);
+		applet.translate(pos.x * cam.zoom + cam.translate.x, pos.y * cam.zoom + cam.translate.y);
 		applet.rotate(angle);
 		applet.rectMode(PApplet.CENTER);
 		applet.fill(type.getColour()[1]);
-		applet.rect(0, 0, width, height);
+		applet.rect(0, 0, width * cam.zoom, height * cam.zoom);
 		applet.fill(type.getColour()[0]);
 		//applet.textSize(6);
 		applet.rotate(PApplet.HALF_PI);
 		//applet.text(type.toString(), -3, 2);
 		applet.noFill();
 		if (selected) {
-			applet.rect(0, 0, width + 2, height + 2);
+			applet.rect(0, 0, (width + 2) * cam.zoom, (height + 2) * cam.zoom);
 		}
 		applet.popMatrix();
 	}
