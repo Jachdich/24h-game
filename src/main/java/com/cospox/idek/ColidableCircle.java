@@ -19,6 +19,9 @@ public class ColidableCircle {
 			if (distance > c.getRad() + rad && distance < (c.getRad() + rad + 1)) {
 				if (c instanceof Cell) {
 					((Cell)c).membraneHealth -= 0.1;
+					if (this instanceof Virus) {
+						((Cell)c).getNucleus().merge(((Virus)this).getGenes());
+					}
 				}
 				if (!collide) return;
 			      PVector normal = c.getPos().copy().sub(this.pos);

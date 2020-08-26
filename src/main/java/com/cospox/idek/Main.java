@@ -4,6 +4,7 @@
 //0:15:00
 //0:10:00
 //0:40:00
+//0:25:00
 
 package com.cospox.idek;
 
@@ -73,7 +74,7 @@ public class Main extends PApplet {
 			cells.remove(c);
 		}
 		
-		if (framesSinceLastTick++ > 60) {
+		if (framesSinceLastTick++ > frameRate) {
 			framesSinceLastTick = 0;
 			for (Cell c : cells) {
 				c.tick();
@@ -87,8 +88,8 @@ public class Main extends PApplet {
 	}
 	
 	public void mousePressed() {
-		//viruses.add(new Virus(new PVector(mouseX, mouseY).sub(cam.translate).div(cam.zoom)));
-		waste.add(new Waste(new PVector(mouseX, mouseY).sub(cam.translate).div(cam.zoom), PVector.random2D()));
+		viruses.add(new Virus(new PVector(mouseX, mouseY).sub(cam.translate).div(cam.zoom)));
+		//waste.add(new Waste(new PVector(mouseX, mouseY).sub(cam.translate).div(cam.zoom), PVector.random2D()));
 	}
 	
 	public void mouseWheel(MouseEvent event) {

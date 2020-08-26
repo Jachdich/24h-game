@@ -14,7 +14,7 @@ public class Cell extends ColidableCircle {
 	
 	public Cell(PVector pos, PVector moveTo, Main parent) {
 		this.setPos(pos);
-		nucleus = new Nucleus(this);
+		setNucleus(new Nucleus(this));
 		this.moveTo = moveTo;
 		this.parent = parent;
 	}
@@ -36,13 +36,13 @@ public class Cell extends ColidableCircle {
 		applet.strokeWeight(membraneHealth / 3 * cam.zoom);
 		applet.circle(scx, scy, scr);
 		applet.strokeWeight(1);
-		nucleus.draw(applet, getPos(), cam);
+		getNucleus().draw(applet, getPos(), cam);
 		if (this.pos != this.moveTo) { 
 			this.pos.add(PVector.sub(moveTo, pos).div(30));
 		}
 	}
 	public void tick() {
-		nucleus.tick();
+		getNucleus().tick();
 	}
 	
 	public void divide(boolean respectMax) {
@@ -59,8 +59,8 @@ public class Cell extends ColidableCircle {
 			}
 		}
 		Cell newCell = new Cell(moveTo.copy(), dir, parent);
-		newCell.nucleus = nucleus.mutate();
-		newCell.nucleus.parent = newCell;
+		newCell.setNucleus(getNucleus().mutate());
+		newCell.getNucleus().parent = newCell;
 		parent.addCell(newCell);
 	}
 
@@ -78,5 +78,13 @@ public class Cell extends ColidableCircle {
 
 	public void setRad(int rad) {
 		this.rad = rad;
+	}
+
+	public Nucleus getNucleus() {
+		return nucleus;
+	}
+
+	public void setNucleus(Nucleus nucleus) {
+		this.nucleus = nucleus;
 	}
 }

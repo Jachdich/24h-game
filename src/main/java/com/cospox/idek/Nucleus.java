@@ -1,6 +1,7 @@
 package com.cospox.idek;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import processing.core.PApplet;
 import processing.core.PVector;
@@ -36,7 +37,7 @@ public class Nucleus {
 		case NONE: break;
 		case REPAIR_MEMBRANE:
 			this.parent.membraneHealth = 
-			(this.parent.membraneHealth + (10 - this.parent.membraneHealth) * 0.8f) % 10;
+			(this.parent.membraneHealth + (10 - this.parent.membraneHealth) * 0.8f);
 			break;
 		case DIVIDE: this.parent.divide(false); break;
 		case DIVIDE_UNTIL: this.parent.divide(true); break;
@@ -71,7 +72,7 @@ public class Nucleus {
 		for (Gene g : this.genes) {
 			n.genes.add(g.copy());
 		}
-		n.headPos = headPos;
+		n.headPos = new Random().nextInt(genes.size());
 		return n;
 	}
 
@@ -81,6 +82,10 @@ public class Nucleus {
 			//TODO mutate genes
 		}
 		return n;
+	}
+
+	public void merge(ArrayList<Gene> genes) {
+		this.genes.addAll(genes);
 	}
 
 }

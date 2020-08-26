@@ -11,9 +11,14 @@ public class Virus extends ColidableCircle {
 		this.pos = pos;
 		this.vel = PVector.random2D();
 		this.rad = 15;
+		genes.add(new Gene(GeneType.REPAIR_MEMBRANE));
 	}
 	
 	public void draw(PApplet applet, ArrayList<ColidableCircle> objs, Cam cam) {
 		super.draw(applet, objs, cam, true);
+	}
+
+	public ArrayList<Gene> getGenes() {
+		return genes;
 	}
 }
