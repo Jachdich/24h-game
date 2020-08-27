@@ -5,6 +5,7 @@
 //0:10:00
 //0:40:00
 //0:25:00
+//1:30:00
 
 package com.cospox.idek;
 
@@ -20,6 +21,7 @@ public class Main extends PApplet {
 	private ArrayList<Cell> cellsToAdd = new ArrayList<Cell>();
 	private ArrayList<Cell> cellsToRemove = new ArrayList<Cell>();
 	private ArrayList<Virus> viruses = new ArrayList<Virus>();
+	private ArrayList<Virus> virusesToRemove = new ArrayList<Virus>();
 	private ArrayList<Food> food = new ArrayList<Food>();
 	private ArrayList<Waste> waste = new ArrayList<Waste>();
 	private Cam cam;
@@ -57,7 +59,7 @@ public class Main extends PApplet {
 		//translate(this.translate.x, this.translate.y);
 		//scale(zoom);
 		for (Cell c: cells) {
-			c.draw(this, cam);
+			c.draw(this, new ArrayList<ColidableCircle>(cells), cam);
 		}
 
 		for (Virus v: viruses) {
@@ -72,6 +74,10 @@ public class Main extends PApplet {
 		
 		for (Cell c: cellsToRemove) {
 			cells.remove(c);
+		}
+		
+		for (Virus c: virusesToRemove) {
+			viruses.remove(c);
 		}
 		
 		if (framesSinceLastTick++ > frameRate) {
@@ -114,5 +120,9 @@ public class Main extends PApplet {
 
 	public void kill(Cell cell) {
 		this.cellsToRemove.add(cell);
+	}
+
+	public void kill(Virus virus) {
+		this.virusesToRemove .add(virus);
 	}
 }

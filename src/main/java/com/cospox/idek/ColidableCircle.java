@@ -9,18 +9,22 @@ public class ColidableCircle {
 	protected PVector pos;
 	protected PVector vel;
 	protected float rad = 15;
+	private float epsilon = 4;
 	
 	public void draw(PApplet applet, ArrayList<ColidableCircle> objs, Cam cam, boolean collide) {
+		applet.noFill();
 		applet.circle(pos.x * cam.zoom + cam.translate.x, pos.y * cam.zoom + cam.translate.y, rad * 2 * cam.zoom);
-		this.pos.add(this.vel);
+		this.pos.add(PVector.div(this.vel, applet.frameRate / 60));
+		epsilon = 1 / (applet.frameRate / 60);
 		for (ColidableCircle c : objs) {
 			
 			float distance = PApplet.dist(pos.x, pos.y, c.getPos().x, c.getPos().y);
-			if (distance > c.getRad() + rad && distance < (c.getRad() + rad + 1)) {
+			if (distance > c.getRad() + rad - epsilon/2 && distance < (c.getRad() + rad + epsilon/2)) {
 				if (c instanceof Cell) {
 					((Cell)c).membraneHealth -= 0.1;
 					if (this instanceof Virus) {
 						((Cell)c).getNucleus().merge(((Virus)this).getGenes());
+						((Virus)this).die();
 					}
 				}
 				if (!collide) return;

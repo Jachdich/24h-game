@@ -1,5 +1,7 @@
 package com.cospox.idek;
 
+import java.util.ArrayList;
+
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PVector;
@@ -11,6 +13,7 @@ public class Cell extends ColidableCircle {
 	float membraneHealth = 9.9f;
 	private Nucleus nucleus;
 	private Main parent;
+	public RNA rna = null;
 	
 	public Cell(PVector pos, PVector moveTo, Main parent) {
 		this.setPos(pos);
@@ -19,7 +22,10 @@ public class Cell extends ColidableCircle {
 		this.parent = parent;
 	}
 	
-	public void draw(PApplet applet, Cam cam) {
+	public void draw(PApplet applet, ArrayList<ColidableCircle> objs, Cam cam) {
+		if (this.rna != null) {
+			this.rna.draw(applet, objs, cam);
+		}
 		if (this.membraneHealth < 0) {
 			this.parent.kill(this);
 			return;

@@ -15,7 +15,7 @@ public class Nucleus {
 		genes.add(new Gene(GeneType.REPAIR_MEMBRANE));
 		genes.add(new Gene(GeneType.DIVIDE_UNTIL));
 		genes.add(new Gene(GeneType.PRODUCE_ATP));
-		genes.add(new Gene(GeneType.COPY_GENE_INTO_RNA));
+		genes.add(new Gene(GeneType.COPY_GENE_INTO_RNA, new int[] {-2, 2}));
 		genes.add(new Gene(GeneType.COPY_RNA_INTO_GENE));
 		genes.add(new Gene(GeneType.INSERT_GENE_INTO_GENOME));
 		genes.add(new Gene(GeneType.NONE));
@@ -41,9 +41,31 @@ public class Nucleus {
 			break;
 		case DIVIDE: this.parent.divide(false); break;
 		case DIVIDE_UNTIL: this.parent.divide(true); break;
-		case COPY_GENE_INTO_RNA:
+		case COPY_GENE_INTO_RNA: {
+			int[] data = genes.get(headPos).getData();
+			int startPos = 0, endPos = 0;
+			     if (data.length == 0) { startPos = headPos; endPos = headPos; }
+			else if (data.length == 1) { startPos = headPos + data[0]; endPos = headPos + data[0]; }
+			else if (data.length >= 2) { startPos = headPos + data[0]; endPos = headPos + data[1]; }
+			     
+			ArrayList<Gene> newGenes = new ArrayList<Gene>();
+			for (int i = startPos; i < endPos + 1; i++) {
+				newGenes.add(genes.get(i));
+			}
+			for (Gene g : newGenes) {
+				System.out.println(g.getType().name());
+			}
+			System.out.println("---");
+			this.parent.rna = new RNA(newGenes);
+			this.parent.rna.pos = this.parent.getPos().copy().add(PVector.random2D());
+			this.parent.rna.vel = PVector.random2D();
 			break;
+		}
 		case COPY_RNA_INTO_GENE:
+			/*
+			if (this.parent.rna != null) {
+				genes.set(headPos, new Gene(this.parent.rna));
+			}*/
 			break;
 		case INSERT_GENE_INTO_GENOME:
 			break;
@@ -61,7 +83,9 @@ public class Nucleus {
 		applet.circle(pos.x * cam.zoom + cam.translate.x, pos.y * cam.zoom + cam.translate.y, 32 * cam.zoom);
 		float angle = 0;
 		for (Gene g : genes) {
-			g.draw(applet, PVector.add(pos, PVector.fromAngle(angle).mult(20)), 20 * PApplet.TWO_PI / genes.size() / 1.1f, angle, cam);
+			g.draw(applet, pos,
+					20 * PApplet.TWO_PI / genes.size(),
+					angle, genes.size(), cam);
 			angle += PApplet.TWO_PI / genes.size();
 		}
 	}
