@@ -10,7 +10,7 @@ public class RNA extends ColidableCircle {
 		this.genes = genes;
 		this.rad = 2;
 	}
-	public void draw(PApplet applet, ArrayList<ColidableCircle> objs, Cam cam) {
-		super.draw(applet, objs, cam, true);
+	public void draw(PApplet applet, Cam cam) {
+		super.draw(applet, cam);
 	}
 }

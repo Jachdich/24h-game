@@ -15,8 +15,9 @@ public class Virus extends ColidableCircle {
 		genes.add(new Gene(GeneType.REPAIR_MEMBRANE));
 	}
 	
-	public void draw(Main applet, ArrayList<ColidableCircle> objs, Cam cam) {
-		super.draw(applet, objs, cam, true);
+	public void draw(Main applet, Cam cam) {
+		applet.noFill();
+		super.draw(applet, cam);
 		if (dead) {
 			applet.kill(this);
 		}

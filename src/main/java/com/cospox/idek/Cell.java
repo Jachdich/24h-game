@@ -7,7 +7,6 @@ import processing.core.PConstants;
 import processing.core.PVector;
 
 public class Cell extends ColidableCircle {
-	private PVector pos;
 	private PVector moveTo;
 	private int rad = 96/2;
 	float membraneHealth = 9.9f;
@@ -16,15 +15,15 @@ public class Cell extends ColidableCircle {
 	public RNA rna = null;
 	
 	public Cell(PVector pos, PVector moveTo, Main parent) {
-		this.setPos(pos);
+		this.pos = pos;
 		setNucleus(new Nucleus(this));
 		this.moveTo = moveTo;
 		this.parent = parent;
 	}
 	
-	public void draw(PApplet applet, ArrayList<ColidableCircle> objs, Cam cam) {
+	public void draw(PApplet applet, Cam cam) {
 		if (this.rna != null) {
-			this.rna.draw(applet, objs, cam);
+			this.rna.draw(applet, cam);
 		}
 		if (this.membraneHealth < 0) {
 			this.parent.kill(this);
@@ -43,10 +42,17 @@ public class Cell extends ColidableCircle {
 		applet.circle(scx, scy, scr);
 		applet.strokeWeight(1);
 		getNucleus().draw(applet, getPos(), cam);
+	}
+	
+	public void update(PApplet applet, ArrayList<ColidableCircle> objs) {
 		if (this.pos != this.moveTo) { 
 			this.pos.add(PVector.sub(moveTo, pos).div(30));
 		}
+		if (this.rna != null) {
+			this.rna.update(applet, objs, true);
+		}
 	}
+	
 	public void tick() {
 		getNucleus().tick();
 	}
@@ -59,6 +65,7 @@ public class Cell extends ColidableCircle {
 		PVector dir = PVector.fromAngle(angle);
 		dir.mult(rad * 2);
 		dir.add(moveTo);
+		if (dir.x < rad || dir.y < rad || dir.x > (Main.boundry.x - rad) || dir.y > (Main.boundry.y - rad)) return;
 		for (Cell c : parent.cells) {
 			if (PApplet.dist(c.moveTo.x, c.moveTo.y, dir.x, dir.y) < rad * 2) {
 				return;
