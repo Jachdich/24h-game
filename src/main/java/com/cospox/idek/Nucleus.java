@@ -30,15 +30,18 @@ public class Nucleus {
 			getGenes().get(headPos - 1).deSelect();
 		}
 		
+		this.parent.energy -= 0.05f;
 		switch (getGenes().get(headPos).getType()) {
 		case NONE: break;
 		case REPAIR_MEMBRANE:
+			this.parent.energy -= 0.1f;
 			this.parent.membraneHealth = 
 			(this.parent.membraneHealth + (10 - this.parent.membraneHealth) * 0.8f);
 			break;
 		case DIVIDE: this.parent.divide(false); break;
 		case DIVIDE_UNTIL: this.parent.divide(true); break;
 		case GENE_TO_RNA: {
+			this.parent.energy -= 0.1f;
 			int[] data = getGenes().get(headPos).getData();
 			int startPos = 0, endPos = 0;
 			     if (data.length == 0) { startPos = headPos; endPos = headPos; }
@@ -49,20 +52,34 @@ public class Nucleus {
 			for (int i = startPos; i < endPos + 1; i++) {
 				newGenes.add(getGenes().get(i));
 			}
-			for (Gene g : newGenes) {
-			}
 			this.parent.rna = new RNA(newGenes);
 			this.parent.rna.pos = this.parent.getPos().copy().add(PVector.random2D());
 			this.parent.rna.vel = PVector.random2D();
 			break;
 		}
 		case RNA_TO_GENE:
+			this.parent.energy -= 0.1f;
 			/*
 			if (this.parent.rna != null) {
 				genes.set(headPos, new Gene(this.parent.rna));
 			}*/
 			break;
 		case PRODUCE_ATP:
+			Food eat = null;
+			for (Food f : this.parent.parent.food) {
+				float dx = this.parent.getPos().x - f.pos.x;
+				float dy = this.parent.getPos().y - f.pos.y;
+				if (dx * dx + dy * dy < this.parent.rad * this.parent.rad) {
+					eat = f;
+					break;
+				}
+			}
+			if (eat != null) {
+				this.parent.parent.waste.add(new Waste(eat.pos.copy(), eat.vel.copy()));
+				this.parent.parent.food.remove(eat);
+				this.parent.energy += 2.0;
+				if (this.parent.energy > 10) this.parent.energy = 10;
+			}
 			break;
 		default:
 			break;
@@ -73,6 +90,8 @@ public class Nucleus {
 	}
 	
 	public void draw(PApplet applet, PVector pos, Cam cam) {
+		applet.noFill();
+		applet.stroke(0);
 		applet.circle(pos.x * cam.zoom + cam.translate.x, pos.y * cam.zoom + cam.translate.y, 32 * cam.zoom);
 		float angle = 0;
 		for (Gene g : getGenes()) {

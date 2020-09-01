@@ -8,11 +8,11 @@ import processing.core.PVector;
 
 public class Cell extends ColidableCircle {
 	private PVector moveTo;
-	private int rad = 96/2;
+	int rad = 96/2;
 	float membraneHealth = 9.9f;
-	float energy = 9.9f;
+	float energy = 10.0f;
 	private Nucleus nucleus;
-	private Main parent;
+	Main parent;
 	public RNA rna = null;
 	
 	public Cell(PVector pos, PVector moveTo, Main parent) {
@@ -39,12 +39,16 @@ public class Cell extends ColidableCircle {
 		}
 		applet.fill(255, 255, 0);
 		applet.stroke(0);
-		applet.rect(scx - 40 * cam.zoom, scy - 40 * cam.zoom, 5 * cam.zoom, energy * 10 * cam.zoom);
-		applet.noFill();
+		applet.rect(scx - 25 * cam.zoom, scy - 36 * cam.zoom, energy * 5 * cam.zoom, 5 * cam.zoom);
+		getNucleus().draw(applet, getPos(), cam);
+		if (energy > 0) {
+			applet.noFill();
+		} else {
+			applet.fill(0x40000000);
+		}
 		applet.strokeWeight(membraneHealth / 3 * cam.zoom);
 		applet.circle(scx, scy, scr);
 		applet.strokeWeight(1);
-		getNucleus().draw(applet, getPos(), cam);
 	}
 	
 	public void update(PApplet applet, ArrayList<ColidableCircle> objs) {
@@ -59,7 +63,6 @@ public class Cell extends ColidableCircle {
 	public void tick() {
 		if (energy > 0) {
 			getNucleus().tick();
-			this.energy -= 0.1; //todo change
 		}
 	}
 	
@@ -77,6 +80,7 @@ public class Cell extends ColidableCircle {
 				return;
 			}
 		}
+		this.energy -= 0.3f;
 		Cell newCell = new Cell(moveTo.copy(), dir, parent);
 		newCell.setNucleus(getNucleus().mutate());
 		newCell.getNucleus().parent = newCell;

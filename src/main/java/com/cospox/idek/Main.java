@@ -1,19 +1,20 @@
 //4:58:00
+//1:35:00
+//0:20:00
 //0:15:00
-//0:30:00
-//0:20:00
-//0:20:00
 
 //TODO
 //Seperate screen for virus development?
 //Initial configuration of cells
-//energy
 //waste removal
 //virus render genes
 //Better virus release mechanism
 //Mutation
 //Score
 //Input data (numbers) to genes
+//genes degrading
+//remove waste
+//only remove waste if it's not in a cell
 
 package com.cospox.idek;
 
@@ -21,21 +22,20 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import processing.core.PApplet;
-import processing.core.PFont;
 import processing.core.PVector;
 import processing.event.MouseEvent;
 
 public class Main extends PApplet {
 	public static final PVector boundry = new PVector(1000, 1000);
-	public static final int waste_target = 48;
-	public static final int food_target = 64;
+	public static final int waste_target = 32;
+	public static final int food_target = 96;
 	ArrayList<Cell> cells = new ArrayList<Cell>();
 	private ArrayList<Cell> cellsToAdd = new ArrayList<Cell>();
 	private ArrayList<Cell> cellsToRemove = new ArrayList<Cell>();
 	ArrayList<Virus> viruses = new ArrayList<Virus>();
 	private ArrayList<Virus> virusesToRemove = new ArrayList<Virus>();
-	private ArrayList<Food> food = new ArrayList<Food>();
-	private ArrayList<Waste> waste = new ArrayList<Waste>();
+	ArrayList<Food> food = new ArrayList<Food>();
+	ArrayList<Waste> waste = new ArrayList<Waste>();
 	private Cam cam;
 	private HUD hud;
 	private int framesSinceLastTick = 0;
@@ -56,7 +56,7 @@ public class Main extends PApplet {
 		hud = new HUD(this);
 		cells.add(new Cell(new PVector(100, 100), new PVector(100, 100), this));
 		for (int i = 0; i < 100; i++)
-			waste.add(new Waste(new PVector(random(boundry.x), random(boundry.y)), PVector.random2D()));
+			waste.add(new Waste(new PVector(random(boundry.x), random(boundry.y)), PVector.random2D().mult(0.8f)));
 
 	}
 	
@@ -76,7 +76,7 @@ public class Main extends PApplet {
 		fill(0);
 		text(frameRate, 10, 10);
 		for (int i = food.size(); i < food_target; i++) {
-			food.add(new Food(new PVector(random(boundry.x), random(boundry.y)), PVector.random2D()));
+			food.add(new Food(new PVector(random(boundry.x), random(boundry.y)), PVector.random2D().mult(0.8f)));
 		}
 		for (int i = waste.size(); i >= waste_target; i--) {
 			waste.remove(new Random().nextInt(waste.size()));
