@@ -1,8 +1,9 @@
 //4:58:00
-
+//0:15:00
 package com.cospox.idek;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import processing.core.PApplet;
 import processing.core.PFont;
@@ -10,6 +11,9 @@ import processing.core.PVector;
 import processing.event.MouseEvent;
 
 public class Main extends PApplet {
+	public static final PVector boundry = new PVector(1000, 1000);
+	public static final int waste_target = 100;
+	public static final int food_target = 100;
 	ArrayList<Cell> cells = new ArrayList<Cell>();
 	private ArrayList<Cell> cellsToAdd = new ArrayList<Cell>();
 	private ArrayList<Cell> cellsToRemove = new ArrayList<Cell>();
@@ -21,20 +25,23 @@ public class Main extends PApplet {
 	private HUD hud;
 	private int framesSinceLastTick = 0;
 	public int targetCells = 30;
+	public boolean paused = false;
 			
 	public static void main(String[] args) {
 		PApplet.main("com.cospox.idek.Main");
 	}
 	
 	public void settings() {
-		size(500, 500);
+		size(800, 800);
 		smooth(10);
 	}
 	
 	public void setup() {
 		cam = new Cam();
-		cells.add(new Cell(new PVector(10, 10), new PVector(10, 10), this));
-		hud = new HUD(this);
+		cells.add(new Cell(new PVector(100, 100), new PVector(100, 100), this));
+		for (int i = 0; i < 100; i++)
+			waste.add(new Waste(new PVector(random(boundry.x), random(boundry.y)), PVector.random2D()));
+
 	}
 	
 	public void addCell(Cell c) {
@@ -43,24 +50,36 @@ public class Main extends PApplet {
 	
 	public void draw() {
 		background(255);
-		fill(0);
+		noFill();
 		stroke(0);
+		rect(cam.translate.x, cam.translate.y, boundry.x * cam.zoom, boundry.y * cam.zoom);
+		fill(0);
 		text(frameRate, 10, 10);
+		for (int i = food.size(); i < food_target; i++) {
+			food.add(new Food(new PVector(random(boundry.x), random(boundry.y)), PVector.random2D()));
+		}
+		for (int i = waste.size(); i >= waste_target; i--) {
+			waste.remove(new Random().nextInt(waste.size()));
+		}
 		//pushMatrix();
 		//translate(this.translate.x, this.translate.y);
 		//scale(zoom);
 		for (Cell c: cells) {
-			c.draw(this, new ArrayList<ColidableCircle>(cells), cam);
+			if (!paused) c.update(this, new ArrayList<ColidableCircle>(cells));
+			c.draw(this, cam);
 		}
 
 		for (Virus v: viruses) {
-			v.draw(this, new ArrayList<ColidableCircle>(cells), cam);
+			if (!paused) v.update(this, new ArrayList<ColidableCircle>(cells), true);
+			v.draw(this, cam);
 		}
 		for (Food p : food) {
-			p.draw(this, new ArrayList<ColidableCircle>(cells), cam, true);
+			if (!paused) p.update(this, new ArrayList<ColidableCircle>(cells), false);
+			p.draw(this, cam);
 		}
 		for (Waste p : waste) {
-			p.draw(this, new ArrayList<ColidableCircle>(cells), cam);
+			if (!paused) p.update(this, new ArrayList<ColidableCircle>(cells), true);
+			p.draw(this, cam);
 		}
 		
 		for (Cell c: cellsToRemove) {
@@ -71,6 +90,7 @@ public class Main extends PApplet {
 			viruses.remove(c);
 		}
 		
+		if (paused) return;
 		if (framesSinceLastTick++ > frameRate) {
 			framesSinceLastTick = 0;
 			for (Cell c : cells) {
@@ -95,6 +115,13 @@ public class Main extends PApplet {
 			}
 		}
 		this.hud.shown = null;*/
+		//viruses.add(new Virus(new PVector(mouseX, mouseY).sub(cam.translate).div(cam.zoom)));
+	}
+	
+	public void keyPressed() {
+		if (keyCode == 114) {
+			paused = !paused;
+		}
 	}
 	
 	public void mouseWheel(MouseEvent event) {
