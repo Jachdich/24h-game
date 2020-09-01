@@ -1,11 +1,4 @@
-//1:28:00
-//0:15:00
-//0:05:00 * 2
-//0:15:00
-//0:10:00
-//0:40:00
-//0:25:00
-//1:30:00
+//4:58:00
 
 package com.cospox.idek;
 
@@ -25,16 +18,13 @@ public class Main extends PApplet {
 	private ArrayList<Food> food = new ArrayList<Food>();
 	private ArrayList<Waste> waste = new ArrayList<Waste>();
 	private Cam cam;
+	private HUD hud;
 	private int framesSinceLastTick = 0;
 	public int targetCells = 30;
 			
 	public static void main(String[] args) {
 		PApplet.main("com.cospox.idek.Main");
 	}
-	
-	//public void circle(float x, float y, float d) {
-	//	
-	//}
 	
 	public void settings() {
 		size(500, 500);
@@ -44,6 +34,7 @@ public class Main extends PApplet {
 	public void setup() {
 		cam = new Cam();
 		cells.add(new Cell(new PVector(10, 10), new PVector(10, 10), this));
+		hud = new HUD(this);
 	}
 	
 	public void addCell(Cell c) {
@@ -90,12 +81,20 @@ public class Main extends PApplet {
 			}
 			cellsToAdd.clear();
 		}
+		this.hud.draw();
 		//popMatrix();
 	}
 	
 	public void mousePressed() {
-		viruses.add(new Virus(new PVector(mouseX, mouseY).sub(cam.translate).div(cam.zoom)));
-		//waste.add(new Waste(new PVector(mouseX, mouseY).sub(cam.translate).div(cam.zoom), PVector.random2D()));
+		if (this.hud.click(mouseX, mouseY)) return;
+		/*
+		for (Cell c: cells) {
+			if (c.isInside(mouseX, mouseY, cam)) {
+				this.hud.show(c);
+				return;
+			}
+		}
+		this.hud.shown = null;*/
 	}
 	
 	public void mouseWheel(MouseEvent event) {

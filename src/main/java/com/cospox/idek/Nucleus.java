@@ -11,29 +11,29 @@ public class Nucleus {
 	Cell parent;
 	private ArrayList<Gene> genes = new ArrayList<Gene>();
 	public Nucleus(Cell parent) {
-		genes.add(new Gene(GeneType.NONE));
-		genes.add(new Gene(GeneType.REPAIR_MEMBRANE));
-		genes.add(new Gene(GeneType.DIVIDE_UNTIL));
-		genes.add(new Gene(GeneType.PRODUCE_ATP));
-		genes.add(new Gene(GeneType.COPY_GENE_INTO_RNA, new int[] {-2, 2}));
-		genes.add(new Gene(GeneType.COPY_RNA_INTO_GENE));
-		genes.add(new Gene(GeneType.INSERT_GENE_INTO_GENOME));
-		genes.add(new Gene(GeneType.NONE));
-		genes.add(new Gene(GeneType.NONE));
-		genes.add(new Gene(GeneType.REPAIR_MEMBRANE));
+		getGenes().add(new Gene(GeneType.NONE));
+		getGenes().add(new Gene(GeneType.REPAIR_MEMBRANE));
+		getGenes().add(new Gene(GeneType.DIVIDE_UNTIL));
+		getGenes().add(new Gene(GeneType.PRODUCE_ATP));
+		getGenes().add(new Gene(GeneType.COPY_GENE_INTO_RNA, new int[] {-2, 2}));
+		getGenes().add(new Gene(GeneType.COPY_RNA_INTO_GENE));
+		getGenes().add(new Gene(GeneType.INSERT_GENE_INTO_GENOME));
+		getGenes().add(new Gene(GeneType.NONE));
+		getGenes().add(new Gene(GeneType.NONE));
+		getGenes().add(new Gene(GeneType.REPAIR_MEMBRANE));
 		this.parent = parent;
 
 	}
 	
 	public void tick() {
-		genes.get(headPos).select();
+		getGenes().get(headPos).select();
 		if (headPos == 0) {
-			genes.get(genes.size() - 1).deSelect();
+			getGenes().get(getGenes().size() - 1).deSelect();
 		} else {
-			genes.get(headPos - 1).deSelect();
+			getGenes().get(headPos - 1).deSelect();
 		}
 		
-		switch (genes.get(headPos).getType()) {
+		switch (getGenes().get(headPos).getType()) {
 		case NONE: break;
 		case REPAIR_MEMBRANE:
 			this.parent.membraneHealth = 
@@ -42,7 +42,7 @@ public class Nucleus {
 		case DIVIDE: this.parent.divide(false); break;
 		case DIVIDE_UNTIL: this.parent.divide(true); break;
 		case COPY_GENE_INTO_RNA: {
-			int[] data = genes.get(headPos).getData();
+			int[] data = getGenes().get(headPos).getData();
 			int startPos = 0, endPos = 0;
 			     if (data.length == 0) { startPos = headPos; endPos = headPos; }
 			else if (data.length == 1) { startPos = headPos + data[0]; endPos = headPos + data[0]; }
@@ -50,7 +50,7 @@ public class Nucleus {
 			     
 			ArrayList<Gene> newGenes = new ArrayList<Gene>();
 			for (int i = startPos; i < endPos + 1; i++) {
-				newGenes.add(genes.get(i));
+				newGenes.add(getGenes().get(i));
 			}
 			for (Gene g : newGenes) {
 				System.out.println(g.getType().name());
@@ -76,40 +76,48 @@ public class Nucleus {
 		}
 		
 		headPos += 1;
-		headPos %= genes.size();
+		headPos %= getGenes().size();
 	}
 	
 	public void draw(PApplet applet, PVector pos, Cam cam) {
 		applet.circle(pos.x * cam.zoom + cam.translate.x, pos.y * cam.zoom + cam.translate.y, 32 * cam.zoom);
 		float angle = 0;
-		for (Gene g : genes) {
+		for (Gene g : getGenes()) {
 			g.draw(applet, pos,
-					20 * PApplet.TWO_PI / genes.size(),
-					angle, genes.size(), cam);
-			angle += PApplet.TWO_PI / genes.size();
+					20 * PApplet.TWO_PI / getGenes().size(),
+					angle, getGenes().size(), cam);
+			angle += PApplet.TWO_PI / getGenes().size();
 		}
 	}
 	
 	public Nucleus copy() {
 		Nucleus n = new Nucleus(parent);
-		n.genes = new ArrayList<Gene>();
-		for (Gene g : this.genes) {
-			n.genes.add(g.copy());
+		n.setGenes(new ArrayList<Gene>());
+		for (Gene g : this.getGenes()) {
+			n.getGenes().add(g.copy());
 		}
-		n.headPos = new Random().nextInt(genes.size());
+		n.headPos = new Random().nextInt(getGenes().size());
 		return n;
 	}
 
 	public Nucleus mutate() {
 		Nucleus n = this.copy();
-		for (Gene g: n.genes) {
+		for (Gene g: n.getGenes()) {
 			//TODO mutate genes
 		}
 		return n;
 	}
 
 	public void merge(ArrayList<Gene> genes) {
-		this.genes.addAll(genes);
+		this.getGenes().addAll(genes);
+	}
+
+	public ArrayList<Gene> getGenes() {
+		return genes;
+	}
+
+	public void setGenes(ArrayList<Gene> genes) {
+		this.genes = genes;
 	}
 
 }

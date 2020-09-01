@@ -69,6 +69,12 @@ public class Cell extends ColidableCircle {
 		newCell.getNucleus().parent = newCell;
 		parent.addCell(newCell);
 	}
+	
+	public boolean isInside(int x, int y, Cam cam) {
+		double dx = x - (this.pos.x * cam.zoom + cam.translate.x),
+			   dy = y - (this.pos.y * cam.zoom + cam.translate.y);
+		return Math.sqrt(dx * dx + dy * dy) <= this.rad * cam.zoom;
+	}
 
 	public PVector getPos() {
 		return pos;
