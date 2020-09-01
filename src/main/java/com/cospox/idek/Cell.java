@@ -10,6 +10,7 @@ public class Cell extends ColidableCircle {
 	private PVector moveTo;
 	private int rad = 96/2;
 	float membraneHealth = 9.9f;
+	float energy = 9.9f;
 	private Nucleus nucleus;
 	private Main parent;
 	public RNA rna = null;
@@ -36,7 +37,9 @@ public class Cell extends ColidableCircle {
 		   && scy > 0 - scr&& scy < applet.height + scr)) {
 			return;
 		}
+		applet.fill(255, 255, 0);
 		applet.stroke(0);
+		applet.rect(scx - 40 * cam.zoom, scy - 40 * cam.zoom, 5 * cam.zoom, energy * 10 * cam.zoom);
 		applet.noFill();
 		applet.strokeWeight(membraneHealth / 3 * cam.zoom);
 		applet.circle(scx, scy, scr);
@@ -54,7 +57,10 @@ public class Cell extends ColidableCircle {
 	}
 	
 	public void tick() {
-		getNucleus().tick();
+		if (energy > 0) {
+			getNucleus().tick();
+			this.energy -= 0.1; //todo change
+		}
 	}
 	
 	public void divide(boolean respectMax) {

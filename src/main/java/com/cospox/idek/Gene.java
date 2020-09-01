@@ -10,12 +10,12 @@ public class Gene {
 	private boolean selected = false;
 	private int[] data = {};
 	public Gene(GeneType type) {
-		this.type = type;
+		this.setType(type);
 	}
 	
 	public Gene(GeneType type, int[] data) {
 		this.data = data;
-		this.type = type;
+		this.setType(type);
 	}
 	
 	public int[] getData() {
@@ -40,7 +40,7 @@ public class Gene {
 	}*/
 	
 	public Gene(GeneType type, RNA rna) {
-		this.type = type;
+		this.setType(type);
 	}
 	
 	void draw_thing(PApplet applet, float r1, float r2, float angle, int n) {
@@ -64,7 +64,7 @@ public class Gene {
 	public void draw(PApplet applet, PVector pos, float height, float angle, int n, Cam cam) {
 		applet.pushMatrix();
 		applet.translate(pos.x * cam.zoom + cam.translate.x, pos.y * cam.zoom + cam.translate.y);
-		applet.fill(type.getColour()[1]);
+		applet.fill(getType().getColour()[1]);
 		if (this.selected) {
 			applet.stroke(255, 0, 0);
 			applet.strokeWeight(cam.zoom);
@@ -82,7 +82,7 @@ public class Gene {
 	}
 	
 	public Gene copy() {
-		return new Gene(this.type, this.data.clone());
+		return new Gene(this.getType(), this.data.clone());
 	}
 	
 	public void select() {
@@ -91,5 +91,9 @@ public class Gene {
 	
 	public void deSelect() {
 		selected = false;
+	}
+
+	public void setType(GeneType type) {
+		this.type = type;
 	}
 }

@@ -20,8 +20,9 @@ public class ColidableCircle {
 		epsilon = 1 / (applet.frameRate / 60);
 		for (ColidableCircle c : objs) {
 			
-			float distance = PApplet.dist(pos.x, pos.y, c.getPos().x, c.getPos().y);
-			if (distance > c.getRad() + rad - epsilon/2 && distance < (c.getRad() + rad + epsilon/2)) {
+			double distance = Math.pow(c.getPos().x - pos.x, 2) + Math.pow(c.getPos().y - pos.y, 2);
+			if (distance > Math.pow(c.getRad() + rad - epsilon/2, 2) &&
+					distance < Math.pow(c.getRad() + rad + epsilon/2, 2)) {
 				if (c instanceof Cell) {
 					((Cell)c).membraneHealth -= 0.1;
 					if (this instanceof Virus) {

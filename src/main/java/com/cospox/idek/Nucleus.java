@@ -11,15 +11,12 @@ public class Nucleus {
 	Cell parent;
 	private ArrayList<Gene> genes = new ArrayList<Gene>();
 	public Nucleus(Cell parent) {
-		getGenes().add(new Gene(GeneType.NONE));
-		getGenes().add(new Gene(GeneType.REPAIR_MEMBRANE));
 		getGenes().add(new Gene(GeneType.DIVIDE_UNTIL));
 		getGenes().add(new Gene(GeneType.PRODUCE_ATP));
-		getGenes().add(new Gene(GeneType.COPY_GENE_INTO_RNA, new int[] {-2, 2}));
-		getGenes().add(new Gene(GeneType.COPY_RNA_INTO_GENE));
-		getGenes().add(new Gene(GeneType.INSERT_GENE_INTO_GENOME));
-		getGenes().add(new Gene(GeneType.NONE));
-		getGenes().add(new Gene(GeneType.NONE));
+		getGenes().add(new Gene(GeneType.REMOVE_WASTE));
+		getGenes().add(new Gene(GeneType.REPAIR_MEMBRANE));
+		getGenes().add(new Gene(GeneType.GENE_TO_RNA, new int[] {-3, 2}));
+		getGenes().add(new Gene(GeneType.RNA_TO_GENE, new int[] {-4, 1}));
 		getGenes().add(new Gene(GeneType.REPAIR_MEMBRANE));
 		this.parent = parent;
 
@@ -41,7 +38,7 @@ public class Nucleus {
 			break;
 		case DIVIDE: this.parent.divide(false); break;
 		case DIVIDE_UNTIL: this.parent.divide(true); break;
-		case COPY_GENE_INTO_RNA: {
+		case GENE_TO_RNA: {
 			int[] data = getGenes().get(headPos).getData();
 			int startPos = 0, endPos = 0;
 			     if (data.length == 0) { startPos = headPos; endPos = headPos; }
@@ -53,21 +50,17 @@ public class Nucleus {
 				newGenes.add(getGenes().get(i));
 			}
 			for (Gene g : newGenes) {
-				System.out.println(g.getType().name());
 			}
-			System.out.println("---");
 			this.parent.rna = new RNA(newGenes);
 			this.parent.rna.pos = this.parent.getPos().copy().add(PVector.random2D());
 			this.parent.rna.vel = PVector.random2D();
 			break;
 		}
-		case COPY_RNA_INTO_GENE:
+		case RNA_TO_GENE:
 			/*
 			if (this.parent.rna != null) {
 				genes.set(headPos, new Gene(this.parent.rna));
 			}*/
-			break;
-		case INSERT_GENE_INTO_GENOME:
 			break;
 		case PRODUCE_ATP:
 			break;

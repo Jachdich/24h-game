@@ -1,5 +1,20 @@
 //4:58:00
 //0:15:00
+//0:30:00
+//0:20:00
+//0:20:00
+
+//TODO
+//Seperate screen for virus development?
+//Initial configuration of cells
+//energy
+//waste removal
+//virus render genes
+//Better virus release mechanism
+//Mutation
+//Score
+//Input data (numbers) to genes
+
 package com.cospox.idek;
 
 import java.util.ArrayList;
@@ -12,12 +27,12 @@ import processing.event.MouseEvent;
 
 public class Main extends PApplet {
 	public static final PVector boundry = new PVector(1000, 1000);
-	public static final int waste_target = 100;
-	public static final int food_target = 100;
+	public static final int waste_target = 48;
+	public static final int food_target = 64;
 	ArrayList<Cell> cells = new ArrayList<Cell>();
 	private ArrayList<Cell> cellsToAdd = new ArrayList<Cell>();
 	private ArrayList<Cell> cellsToRemove = new ArrayList<Cell>();
-	private ArrayList<Virus> viruses = new ArrayList<Virus>();
+	ArrayList<Virus> viruses = new ArrayList<Virus>();
 	private ArrayList<Virus> virusesToRemove = new ArrayList<Virus>();
 	private ArrayList<Food> food = new ArrayList<Food>();
 	private ArrayList<Waste> waste = new ArrayList<Waste>();
@@ -38,6 +53,7 @@ public class Main extends PApplet {
 	
 	public void setup() {
 		cam = new Cam();
+		hud = new HUD(this);
 		cells.add(new Cell(new PVector(100, 100), new PVector(100, 100), this));
 		for (int i = 0; i < 100; i++)
 			waste.add(new Waste(new PVector(random(boundry.x), random(boundry.y)), PVector.random2D()));
@@ -47,6 +63,10 @@ public class Main extends PApplet {
 	public void addCell(Cell c) {
 		cellsToAdd.add(c);
 	}
+	
+	//public void strokeWeight(float n) {
+	//	
+	//}
 	
 	public void draw() {
 		background(255);
