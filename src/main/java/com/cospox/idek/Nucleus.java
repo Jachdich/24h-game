@@ -1,6 +1,7 @@
 package com.cospox.idek;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -16,8 +17,8 @@ public class Nucleus {
 		getGenes().add(new Gene(GeneType.PRODUCE_ATP));
 		getGenes().add(new Gene(GeneType.REMOVE_WASTE));
 		getGenes().add(new Gene(GeneType.REPAIR_MEMBRANE));
-		getGenes().add(new Gene(GeneType.GENE_TO_RNA, new int[] {-4, 2}));
-		getGenes().add(new Gene(GeneType.RNA_TO_GENE, new int[] {-5, 1}));
+		getGenes().add(new Gene(GeneType.GENE_TO_RNA, new ArrayList<>(Arrays.asList(-4, 2))));
+		getGenes().add(new Gene(GeneType.RNA_TO_GENE, new ArrayList<>(Arrays.asList(-5, 1))));
 		getGenes().add(new Gene(GeneType.REPAIR_MEMBRANE));
 		this.parent = parent;
 
@@ -49,11 +50,11 @@ public class Nucleus {
 		case DIVIDE_UNTIL: this.parent.divide(true); break;
 		case GENE_TO_RNA: {
 			this.parent.energy -= 0.1f;
-			int[] data = getGenes().get(headPos).getData();
+			ArrayList<Integer> data = getGenes().get(headPos).getData();
 			int startPos = 0, endPos = 0;
-			     if (data.length == 0) { startPos = headPos; endPos = headPos; }
-			else if (data.length == 1) { startPos = headPos + data[0]; endPos = headPos + data[0]; }
-			else if (data.length >= 2) { startPos = headPos + data[0]; endPos = headPos + data[1]; }
+			     if (data.size() == 0) { startPos = headPos; endPos = headPos; }
+			else if (data.size() == 1) { startPos = headPos + data.get(0); endPos = headPos + data.get(0); }
+			else if (data.size() >= 2) { startPos = headPos + data.get(0); endPos = headPos + data.get(1); }
 			     
 			ArrayList<Gene> newGenes = new ArrayList<Gene>();
 			if (startPos >= getGenes().size() ||
@@ -74,11 +75,11 @@ public class Nucleus {
 			this.parent.energy -= 0.1f;
 			
 			if (this.parent.rna != null) {
-				int[] data = getGenes().get(headPos).getData();
+				ArrayList<Integer> data = getGenes().get(headPos).getData();
 				int startPos = 0, endPos = 0;
-				     if (data.length == 0) { startPos = 0; endPos = 0; }
-				else if (data.length == 1) { startPos = data[0]; endPos = data[0]; }
-				else if (data.length >= 2) { startPos = data[0]; endPos = data[1]; }
+				     if (data.size() == 0) { startPos = 0; endPos = 0; }
+				else if (data.size() == 1) { startPos = data.get(0); endPos = data.get(0); }
+				else if (data.size() >= 2) { startPos = data.get(0); endPos = data.get(1); }
 				int toRead = endPos - startPos;
 				int i = 0;
 				for (Gene g : this.parent.rna.genes) { 
@@ -173,9 +174,9 @@ public class Nucleus {
 				GeneType ty = GeneType.values()[Main.rand.nextInt(GeneType.values().length)];
 				if (Main.rand.nextDouble() < 0.3) {
 					int datalen = Main.rand.nextInt(4);
-					int[] data = new int[datalen];
+					ArrayList<Integer> data = new ArrayList<Integer>();
 					for (int i = 0; i < datalen; i++) {
-						data[i] = Main.rand.nextInt(temp.size());
+						data.add(Main.rand.nextInt(temp.size()));
 					}
 					
 					genes.add(new Gene(ty, data));

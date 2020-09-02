@@ -1,5 +1,7 @@
 package com.cospox.idek;
 
+import java.util.ArrayList;
+
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PVector;
@@ -9,17 +11,17 @@ public class Gene {
 	private static int width = 5;
 	float health = 10.0f;
 	private boolean selected = false;
-	private int[] data = {};
+	private ArrayList<Integer> data = new ArrayList<Integer>();
 	public Gene(GeneType type) {
 		this.setType(type);
 	}
 	
-	public Gene(GeneType type, int[] data) {
+	public Gene(GeneType type, ArrayList<Integer> data) {
 		this.data = data;
 		this.setType(type);
 	}
 	
-	public int[] getData() {
+	public ArrayList<Integer> getData() {
 		return this.data;
 	}
 	
@@ -64,7 +66,7 @@ public class Gene {
 			applet.stroke(255, 0, 0);
 			applet.strokeWeight(cam.zoom);
 		}
-		for (int i = 0; i < data.length + 1; i++) {
+		for (int i = 0; i < data.size() + 1; i++) {
 			draw_thing(applet, (20 - width + width * i) * cam.zoom, (20 + width * i) * cam.zoom, angle, n);
 		}
 		applet.stroke(0);
@@ -77,7 +79,7 @@ public class Gene {
 	}
 	
 	public Gene copy() {
-		return new Gene(this.getType(), this.data.clone());
+		return new Gene(this.getType(), new ArrayList<Integer>(this.data));
 	}
 	
 	public void select() {

@@ -15,7 +15,7 @@ public class HUD {
 		if (virus != null) {
 			parent.noStroke();
 			parent.fill(128);
-			parent.rect(0, 0, 120 * 2 + 20 * 2, PApplet.max(virus.getGenes().size(), GeneType.values().length)
+			parent.rect(0, 0, 120 * 3 + 20 * 2, PApplet.max(virus.getGenes().size(), GeneType.values().length)
 					* 30 + 30 * 3);
 			int y = 30;
 			for (Gene g : virus.getGenes()) {
@@ -27,6 +27,11 @@ public class HUD {
 					parent.noStroke();
 				}
 				parent.rect(20, y, 120, 29);
+				int f = 120;
+				for (int x : g.getData()) {
+					parent.rect(20 + f, y, 29, 29);
+					f += 29;
+				}
 				parent.fill(g.getType().getColour()[0]);
 				parent.text(g.getType().name(), 20, y + 19);
 				y += 30;
@@ -41,15 +46,17 @@ public class HUD {
 			y += 40;
 			parent.fill(0);
 			parent.text("Release", 20, y + 10);
+			y += 15;
+			parent.text("Add Data", 20, y + 10);
 			
 			//gene type menu
 			y = 30;
 			parent.noStroke();
 			for (GeneType g : GeneType.values()) {
 				parent.fill(g.getColour()[1]);
-				parent.rect(20 + 120 + 10, y, 120, 30);
+				parent.rect(20 + 120 * 2, y, 120, 30);
 				parent.fill(g.getColour()[0]);
-				parent.text(g.name(), 20 + 120 + 10, y + 19);
+				parent.text(g.name(), 20 + 120 * 2, y + 19);
 				y += 30;
 			}
 			
@@ -63,7 +70,7 @@ public class HUD {
 			return true;
 		}
 		if (this.virus == null) return false;
-		if (mouseX > 20 + 120 + 10 && mouseX < 20 + 120 * 2 + 10 && this.selectedGene != null) {
+		if (mouseX > 20 + 120 * 2 && mouseX < 20 + 120 * 3 && this.selectedGene != null) {
 			if (mouseY > 30) {
 				int idx = (mouseY - 30) / 30;
 				if (idx < GeneType.values().length) {
@@ -95,11 +102,14 @@ public class HUD {
 				return true;
 				
 			}
-		} else if (mouseY > y + 40 && mouseY < y + 60 && mouseX > 20 && mouseX < 20 + 120) {
+		} else if (mouseY > y + 40 && mouseY < y + 55 && mouseX > 20 && mouseX < 20 + 120) {
 			//release
 			this.parent.viruses.add(this.virus);
 			this.virus = null;
 			return true;
+		} else if (mouseY > y + 40 + 15 && mouseY < y + 40 + 15*2 && mouseX > 20 && mouseX < 20 + 120) {
+			//add data
+			this.selectedGene.getData().add(0);
 		}
 		return false;
 	}
