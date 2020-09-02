@@ -7,6 +7,7 @@ import processing.core.PVector;
 public class Gene {
 	private GeneType type;
 	private static int width = 5;
+	float health = 10.0f;
 	private boolean selected = false;
 	private int[] data = {};
 	public Gene(GeneType type) {
@@ -22,22 +23,16 @@ public class Gene {
 		return this.data;
 	}
 	
-	/*
+	
 	private int getActualColour(int col) {
-		if (selected) {
-			int r = (col & 0xFF0000) >> 16;
-			int g = (col & 0x00FF00) >> 8;
-			int b = (col & 0x0000FF) >> 0;
-			r += 30;
-			g += 30;
-			b += 30;
-			if (r > 255) r = 255;
-			if (g > 255) g = 255;
-			if (b > 255) b = 255;
-			return 0xFF << 24 | r << 16 | g << 8 | b;
-		}
-		return col;
-	}*/
+		int r = (col & 0xFF0000) >> 16;
+		int g = (col & 0x00FF00) >> 8;
+		int b = (col & 0x0000FF) >> 0;
+		return 0xFF << 24 |
+				(int)(r  * (health / 10)) << 16 |
+				(int)(g  * (health / 10)) << 8 |
+				(int)(b  * (health / 10));
+	}
 	
 	public Gene(GeneType type, RNA rna) {
 		this.setType(type);
@@ -64,7 +59,7 @@ public class Gene {
 	public void draw(PApplet applet, PVector pos, float height, float angle, int n, Cam cam) {
 		applet.pushMatrix();
 		applet.translate(pos.x * cam.zoom + cam.translate.x, pos.y * cam.zoom + cam.translate.y);
-		applet.fill(getType().getColour()[1]);
+		applet.fill(getActualColour(getType().getColour()[1]));
 		if (this.selected) {
 			applet.stroke(255, 0, 0);
 			applet.strokeWeight(cam.zoom);

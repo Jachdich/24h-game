@@ -59,7 +59,7 @@ public class HUD {
 
 	public boolean click(int mouseX, int mouseY) {
 		if (mouseX < 10 && mouseY < 10) {
-			this.virus = new Virus(new PVector(0,0));
+			this.virus = new Virus(new PVector(Main.boundry.x / 2, Main.boundry.y / 2));
 			return true;
 		}
 		if (this.virus == null) return false;

@@ -1,9 +1,6 @@
 package com.cospox.idek;
 
 import java.util.ArrayList;
-import java.util.Random;
-
-import javax.swing.text.StyleConstants.ParagraphConstants;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -11,6 +8,7 @@ import processing.core.PVector;
 
 public class Nucleus {
 	private int headPos = 0;
+	public static float mutationChance = 10.0f;
 	Cell parent;
 	private ArrayList<Gene> genes = new ArrayList<Gene>();
 	public Nucleus(Cell parent) {
@@ -18,15 +16,21 @@ public class Nucleus {
 		getGenes().add(new Gene(GeneType.PRODUCE_ATP));
 		getGenes().add(new Gene(GeneType.REMOVE_WASTE));
 		getGenes().add(new Gene(GeneType.REPAIR_MEMBRANE));
-		getGenes().add(new Gene(GeneType.GENE_TO_RNA, new int[] {-3, 2}));
-		getGenes().add(new Gene(GeneType.RNA_TO_GENE, new int[] {-4, 1}));
+		getGenes().add(new Gene(GeneType.GENE_TO_RNA, new int[] {-4, 2}));
+		getGenes().add(new Gene(GeneType.RNA_TO_GENE, new int[] {-5, 1}));
 		getGenes().add(new Gene(GeneType.REPAIR_MEMBRANE));
 		this.parent = parent;
 
 	}
 	
 	public void tick() {
+		if (headPos >= getGenes().size()) headPos = 0;
 		getGenes().get(headPos).select();
+		getGenes().get(headPos).health -= 1.0f;
+		if (getGenes().get(headPos).health <= 0) {
+			getGenes().get(headPos).health = 0;
+			return;
+		}
 		if (headPos == 0) {
 			getGenes().get(getGenes().size() - 1).deSelect();
 		} else {
@@ -37,7 +41,7 @@ public class Nucleus {
 		switch (getGenes().get(headPos).getType()) {
 		case NONE: break;
 		case REPAIR_MEMBRANE:
-			this.parent.energy -= 0.1f;
+			this.parent.energy -= 0.15f;
 			this.parent.membraneHealth = 
 			(this.parent.membraneHealth + (10 - this.parent.membraneHealth) * 0.8f);
 			break;
@@ -52,20 +56,41 @@ public class Nucleus {
 			else if (data.length >= 2) { startPos = headPos + data[0]; endPos = headPos + data[1]; }
 			     
 			ArrayList<Gene> newGenes = new ArrayList<Gene>();
+			if (startPos >= getGenes().size() ||
+				startPos < 0 ||
+				endPos >= getGenes().size() ||
+				endPos < 0) {
+				break;
+			}
 			for (int i = startPos; i < endPos + 1; i++) {
-				newGenes.add(getGenes().get(i));
+				newGenes.add(getGenes().get(i).copy());
 			}
 			this.parent.rna = new RNA(newGenes);
-			this.parent.rna.pos = this.parent.getPos().copy().add(PVector.random2D());
+			this.parent.rna.pos = this.parent.getPos().copy().add(PVector.random2D().mult(4));
 			this.parent.rna.vel = PVector.random2D();
 			break;
 		}
 		case RNA_TO_GENE:
 			this.parent.energy -= 0.1f;
-			/*
+			
 			if (this.parent.rna != null) {
-				genes.set(headPos, new Gene(this.parent.rna));
-			}*/
+				int[] data = getGenes().get(headPos).getData();
+				int startPos = 0, endPos = 0;
+				     if (data.length == 0) { startPos = 0; endPos = 0; }
+				else if (data.length == 1) { startPos = data[0]; endPos = data[0]; }
+				else if (data.length >= 2) { startPos = data[0]; endPos = data[1]; }
+				int toRead = endPos - startPos;
+				int i = 0;
+				for (Gene g : this.parent.rna.genes) { 
+					getGenes().set((headPos + startPos + i) % genes.size(), g);
+					if (toRead-- == 0) {
+						break;
+					}
+					i++;
+				}
+				getGenes().get(headPos).select();
+			}
+			this.parent.rna = null;
 			break;
 		case PRODUCE_ATP: {
 			Food eat = null;
@@ -134,7 +159,7 @@ public class Nucleus {
 		for (Gene g : this.getGenes()) {
 			n.getGenes().add(g.copy());
 		}
-		n.headPos = Main.rand.nextInt(getGenes().size());
+		n.headPos = Main.rand.nextInt(n.getGenes().size());
 		return n;
 	}
 
@@ -144,7 +169,7 @@ public class Nucleus {
 		ArrayList<Gene> genes = n.getGenes();
 		genes.clear();
 		for (Gene g: temp) {
-			if (Main.rand.nextDouble() < 0.008) {
+			if (Main.rand.nextDouble() < 0.008 * mutationChance) {
 				GeneType ty = GeneType.values()[Main.rand.nextInt(GeneType.values().length)];
 				if (Main.rand.nextDouble() < 0.3) {
 					int datalen = Main.rand.nextInt(4);
@@ -158,12 +183,12 @@ public class Nucleus {
 					genes.add(new Gene(ty));
 				}
 			} else {
-				if (Main.rand.nextDouble() > 0.005) {
+				if (Main.rand.nextDouble() > 0.005 * mutationChance) {
 					genes.add(g);
 				}
 			}
 		}
-		if (Main.rand.nextDouble() < 0.005) {
+		if (Main.rand.nextDouble() < 0.005 * mutationChance * temp.size()) {
 			genes.add(Main.rand.nextInt(genes.size()),
 					new Gene(GeneType.values()[Main.rand.nextInt(GeneType.values().length)]));
 		}

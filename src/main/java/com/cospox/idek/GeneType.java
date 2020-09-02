@@ -29,6 +29,7 @@ public enum GeneType {
 		case NONE:					  return new int[]{0xFFFFFFFF, 0xFF111111};
 		case PRODUCE_ATP:			  return new int[]{0xFF000000, 0xFFFFFF00};
 		case REPAIR_MEMBRANE:         return new int[]{0xFFFFFFFF, 0xFF2222FF};
+		case REMOVE_WASTE:            return new int[]{0xFFFFFFFF, 0xFF804000};
 		default:                      return new int[]{0xFFFFFFFF, 0xFF000000};
 		}
 	}

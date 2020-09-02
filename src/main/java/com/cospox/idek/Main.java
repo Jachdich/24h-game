@@ -1,19 +1,17 @@
 //4:58:00
 //1:35:00
-//0:20:00
-//0:15:00
-//0:35:00
-//0:35:00
-//
+//2:00:00
+//0:30:00
+
 //TODO
 //Seperate screen for virus development?
 //Initial configuration of cells
-//virus render genes
-//Better virus release mechanism
-//Mutation
+//settings
+//tutorial
+//title screen
 //Score
 //Input data (numbers) to genes
-//genes degrading
+//Only allow viruses to enter cells that aren't already infected
 
 //DONE???????!?
 //waste removal ///??????
@@ -21,7 +19,7 @@
 
 //BUGS
 //Waste can get trapped "inside" a cell wall causing the cell to die
-
+//Is that a bug??
 
 package com.cospox.idek;
 
@@ -83,6 +81,7 @@ public class Main extends PApplet {
 		rect(cam.translate.x, cam.translate.y, boundry.x * cam.zoom, boundry.y * cam.zoom);
 		fill(0);
 		text(frameRate, 10, 10);
+		text(waste.size(), 70, 10);
 		//if (frameRate < 100000) return;
 		for (int i = food.size(); i < food_target; i++) {
 			food.add(new Food(new PVector(random(boundry.x), random(boundry.y)), PVector.random2D().mult(0.8f)));
