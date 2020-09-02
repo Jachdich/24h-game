@@ -17,6 +17,7 @@ public class Virus extends ColidableCircle {
 	public void draw(Main applet, Cam cam) {
 		applet.noFill();
 		super.draw(applet, cam);
+		
 		float angle = 0;
 		for (Gene g : getGenes()) {
 			g.draw(applet, pos,
@@ -24,6 +25,7 @@ public class Virus extends ColidableCircle {
 					angle, getGenes().size(), cam);
 			angle += PApplet.TWO_PI / getGenes().size();
 		}
+		
 		if (dead) {
 			applet.kill(this);
 		}
