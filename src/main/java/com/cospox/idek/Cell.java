@@ -84,6 +84,10 @@ public class Cell extends ColidableCircle {
 		Cell newCell = new Cell(moveTo.copy(), dir, parent);
 		newCell.setNucleus(getNucleus().mutate());
 		newCell.getNucleus().parent = newCell;
+		newCell.energy = this.energy * 0.8f;
+		this.energy *= 0.8f;
+		newCell.membraneHealth = this.membraneHealth * 0.8f;
+		this.membraneHealth *= 0.8f;
 		parent.addCell(newCell);
 	}
 	

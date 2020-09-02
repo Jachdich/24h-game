@@ -2,19 +2,26 @@
 //1:35:00
 //0:20:00
 //0:15:00
-
+//0:35:00
+//0:35:00
+//
 //TODO
 //Seperate screen for virus development?
 //Initial configuration of cells
-//waste removal
 //virus render genes
 //Better virus release mechanism
 //Mutation
 //Score
 //Input data (numbers) to genes
 //genes degrading
-//remove waste
-//only remove waste if it's not in a cell
+
+//DONE???????!?
+//waste removal ///??????
+//only remove waste if it's not in a cell ///?????
+
+//BUGS
+//Waste can get trapped "inside" a cell wall causing the cell to die
+
 
 package com.cospox.idek;
 
@@ -26,9 +33,10 @@ import processing.core.PVector;
 import processing.event.MouseEvent;
 
 public class Main extends PApplet {
-	public static final PVector boundry = new PVector(1000, 1000);
+	public static final PVector boundry = new PVector(700, 700);
+	public static Random rand = new Random();
 	public static final int waste_target = 32;
-	public static final int food_target = 96;
+	public static final int food_target = 128;
 	ArrayList<Cell> cells = new ArrayList<Cell>();
 	private ArrayList<Cell> cellsToAdd = new ArrayList<Cell>();
 	private ArrayList<Cell> cellsToRemove = new ArrayList<Cell>();
@@ -47,11 +55,11 @@ public class Main extends PApplet {
 	}
 	
 	public void settings() {
-		size(800, 800);
-		smooth(10);
+		size(800, 800, P3D);
 	}
 	
 	public void setup() {
+		smooth();
 		cam = new Cam();
 		hud = new HUD(this);
 		cells.add(new Cell(new PVector(100, 100), new PVector(100, 100), this));
@@ -75,11 +83,28 @@ public class Main extends PApplet {
 		rect(cam.translate.x, cam.translate.y, boundry.x * cam.zoom, boundry.y * cam.zoom);
 		fill(0);
 		text(frameRate, 10, 10);
+		//if (frameRate < 100000) return;
 		for (int i = food.size(); i < food_target; i++) {
 			food.add(new Food(new PVector(random(boundry.x), random(boundry.y)), PVector.random2D().mult(0.8f)));
 		}
-		for (int i = waste.size(); i >= waste_target; i--) {
-			waste.remove(new Random().nextInt(waste.size()));
+		
+		//TODO ??
+		int pos = 0;
+		while (waste.size() >= waste_target) {
+			Waste w = waste.get(pos);
+			boolean remove = true;
+			for (Cell c : cells) {
+				float dx = w.pos.x - c.pos.x;
+				float dy = w.pos.y - c.pos.y;
+				if (dx * dx + dy * dy < c.rad * c.rad) {
+					remove = false;
+					break;
+				}
+			}
+			if (remove) {
+				waste.remove(w);
+			}
+			if (++pos >= waste.size()) break;
 		}
 		//pushMatrix();
 		//translate(this.translate.x, this.translate.y);
