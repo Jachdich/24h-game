@@ -2,6 +2,7 @@
 //1:35:00
 //2:00:00
 //0:30:00
+//0:20:00
 
 //TODO
 //Seperate screen for virus development?
@@ -53,7 +54,7 @@ public class Main extends PApplet {
 	}
 	
 	public void settings() {
-		size(800, 800, P3D);
+		size(800, 800, P2D);
 	}
 	
 	public void setup() {
@@ -166,6 +167,7 @@ public class Main extends PApplet {
 		if (keyCode == 114) {
 			paused = !paused;
 		}
+		this.hud.keyPressed(keyCode);
 	}
 	
 	public void mouseWheel(MouseEvent event) {

@@ -1,12 +1,15 @@
 package com.cospox.idek;
 
 import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.core.PVector;
 
 public class HUD {
 	private Main parent;
 	private Virus virus = null;
 	private Gene selectedGene = null;
+	private Integer selectedData = null;
+	private String textBuffer = "";
 	public HUD(Main parent) {
 		this.parent = parent;
 	}
@@ -27,10 +30,22 @@ public class HUD {
 					parent.noStroke();
 				}
 				parent.rect(20, y, 120, 29);
-				int f = 120;
+				parent.noStroke();
+				int f = 121;
+				int idx = 0;
 				for (int x : g.getData()) {
+					if (this.selectedData != null && this.selectedData.equals(idx) && g == this.selectedGene) {
+						parent.stroke(g.getType().getColour()[0]);
+						parent.strokeWeight(2);
+					} else {
+						parent.noStroke();
+					}
+					parent.fill(g.getType().getColour()[1]);
 					parent.rect(20 + f, y, 29, 29);
-					f += 29;
+					parent.fill(g.getType().getColour()[0]);
+					parent.text(Integer.toString(x), 24 + f, y + 20);
+					f += 30;
+					idx += 1;
 				}
 				parent.fill(g.getType().getColour()[0]);
 				parent.text(g.getType().name(), 20, y + 19);
@@ -63,6 +78,23 @@ public class HUD {
 		}
 		
 	}
+	
+	public void keyPressed(int keyCode) {
+		if (keyCode == PConstants.BACKSPACE) {
+			if (this.textBuffer.length() > 0) {
+				this.textBuffer = this.textBuffer.substring(0, this.textBuffer.length() - 1);
+			}
+		} else if (keyCode >= '0' && keyCode <= '9') {
+			this.textBuffer = this.textBuffer + String.valueOf((char)keyCode);
+		}
+		if (this.selectedGene != null && this.selectedData != null) {
+			try {
+				this.selectedGene.getData().set(this.selectedData, Integer.parseInt(textBuffer));
+			} catch (NumberFormatException e) {
+				this.selectedGene.getData().set(this.selectedData, 0);
+			}
+		}
+	}
 
 	public boolean click(int mouseX, int mouseY) {
 		if (mouseX < 10 && mouseY < 10) {
@@ -70,7 +102,7 @@ public class HUD {
 			return true;
 		}
 		if (this.virus == null) return false;
-		if (mouseX > 20 + 120 * 2 && mouseX < 20 + 120 * 3 && this.selectedGene != null) {
+		if (mouseX > 20 + 120 * 2 && mouseX < (20 + 120 * 3) && this.selectedGene != null) {
 			if (mouseY > 30) {
 				int idx = (mouseY - 30) / 30;
 				if (idx < GeneType.values().length) {
@@ -79,11 +111,19 @@ public class HUD {
 				}
 			}
 		}
-		if (mouseX > 20 && mouseX < 20 + 120) {
+		if (mouseX > 20 && mouseX < 20 + 120 + 30 * 3) {
 			if (mouseY > 30) {
 				int idx = (mouseY - 30) / 30;
 				if (idx < this.virus.getGenes().size()) {
 					this.selectedGene = this.virus.getGenes().get(idx);
+					if (mouseX > 20 + 120) {
+						//clicked on data
+						int dataIdx = (mouseX - 20 - 120) / 30;
+						if (dataIdx < this.selectedGene.getData().size()) {
+							this.selectedData = dataIdx;
+							this.textBuffer = Integer.toString(this.selectedGene.getData().get(dataIdx));
+						} else this.selectedData = null;
+					} else this.selectedData = null;
 					return true;
 				}
 			}
@@ -109,7 +149,11 @@ public class HUD {
 			return true;
 		} else if (mouseY > y + 40 + 15 && mouseY < y + 40 + 15*2 && mouseX > 20 && mouseX < 20 + 120) {
 			//add data
+			if (this.selectedGene.getData().size() >= 3) return true;
 			this.selectedGene.getData().add(0);
+			this.selectedData = this.selectedGene.getData().size() - 1;
+			this.textBuffer = "0";
+			return true;
 		}
 		return false;
 	}
