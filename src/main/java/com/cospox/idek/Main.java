@@ -7,13 +7,9 @@
 //tutorial
 //title screen
 //Score
-//Input data (numbers) to genes
 //Only allow viruses to enter cells that aren't already infected
-//Turn dead genes into NONE genes instead of stopping
-//random chance of gene decaying/losing health
 
 //DONE???????!?
-//waste removal ///??????
 //only remove waste if it's not in a cell ///?????
 
 //BUGS

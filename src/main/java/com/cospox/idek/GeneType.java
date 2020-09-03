@@ -21,6 +21,8 @@ public enum GeneType {
 		return String.valueOf(letter);
 	}
 	
+	public char getLetter() { return letter; }
+	
 	public int[] getColour() {
 		switch (this) {
 		case GENE_TO_RNA: 	          return new int[]{0xFFFFFFFF, 0xFFFF22FF};

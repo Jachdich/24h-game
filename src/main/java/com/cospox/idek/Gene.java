@@ -101,4 +101,13 @@ public class Gene {
 	public void setType(GeneType type) {
 		this.type = type;
 	}
+
+	public char hash() {
+		char out = (char)type.getLetter();
+		for (int x : this.data) {
+			out ^= (x ^ 0xAA);
+		}
+		
+		return out;
+	}
 }

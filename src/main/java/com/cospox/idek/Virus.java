@@ -42,4 +42,18 @@ public class Virus extends ColidableCircle {
 	public void setGenes(ArrayList<Gene> genes2) {
 		this.genes = genes2;
 	}
+	
+	public long hash() {
+		long out = 0;
+		int idx = 0;
+		for (Gene g : this.genes) {
+			char ghash = g.hash();
+			if (idx >= 8) {
+				out = out ^ ghash << ((idx++ * 8) % 8);
+			} else {
+				out = out | ghash << (idx++ * 8);
+			}
+		}
+		return out;
+	}
 }
