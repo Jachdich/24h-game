@@ -27,6 +27,7 @@ public class Gene {
 	
 	
 	private int getActualColour(int col) {
+		if (health < 0) health = 0;
 		int r = (col & 0xFF0000) >> 16;
 		int g = (col & 0x00FF00) >> 8;
 		int b = (col & 0x0000FF) >> 0;
@@ -75,11 +76,18 @@ public class Gene {
 	}
 	
 	public GeneType getType() {
+		if (health <= 0) return GeneType.NONE;
 		return type;
 	}
 	
 	public Gene copy() {
 		return new Gene(this.getType(), new ArrayList<Integer>(this.data));
+	}
+	
+	public Gene copyWithHealth() {
+		Gene g = new Gene(this.getType(), new ArrayList<Integer>(this.data));
+		g.health = this.health;
+		return g;
 	}
 	
 	public void select() {
