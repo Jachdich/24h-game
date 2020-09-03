@@ -9,7 +9,7 @@ import processing.core.PVector;
 
 public class Nucleus {
 	private int headPos = 0;
-	public static float mutationChance = 10.0f;
+	public static float mutationChance = 3.0f;
 	Cell parent;
 	private ArrayList<Gene> genes = new ArrayList<Gene>();
 	public Nucleus(Cell parent) {
@@ -27,11 +27,7 @@ public class Nucleus {
 	public void tick() {
 		if (headPos >= getGenes().size()) headPos = 0;
 		getGenes().get(headPos).select();
-		getGenes().get(headPos).health -= 1.0f;
-		if (getGenes().get(headPos).health <= 0) {
-			getGenes().get(headPos).health = 0;
-			return;
-		}
+		getGenes().get(headPos).health -= Main.rand.nextFloat() * 2;
 		if (headPos == 0) {
 			getGenes().get(getGenes().size() - 1).deSelect();
 		} else {
@@ -82,8 +78,11 @@ public class Nucleus {
 				else if (data.size() >= 2) { startPos = data.get(0); endPos = data.get(1); }
 				int toRead = endPos - startPos;
 				int i = 0;
-				for (Gene g : this.parent.rna.genes) { 
-					getGenes().set((headPos + startPos + i) % genes.size(), g);
+				for (Gene g : this.parent.rna.genes) {
+					int a = (headPos + startPos + i);
+					if (a < 0) a = genes.size() + a;
+					if (a < 0) a = 0;
+					getGenes().set(a % genes.size(), g);
 					if (toRead-- == 0) {
 						break;
 					}
@@ -131,6 +130,18 @@ public class Nucleus {
 					//break;
 				}
 			}
+			break;
+		}
+		
+		case MAKE_VIRUS: {
+			Virus v = new Virus(this.parent.pos.copy());
+			if (this.parent.rna != null) {
+				v.setGenes(this.parent.rna.genes);
+			} else {
+				v.setGenes(new ArrayList<Gene>());
+			}
+			this.parent.rna = null;
+			this.parent.parent.viruses.add(v);
 		}
 			
 		default:
@@ -158,7 +169,7 @@ public class Nucleus {
 		Nucleus n = new Nucleus(parent);
 		n.setGenes(new ArrayList<Gene>());
 		for (Gene g : this.getGenes()) {
-			n.getGenes().add(g.copy());
+			n.getGenes().add(g.copyWithHealth());
 		}
 		n.headPos = Main.rand.nextInt(n.getGenes().size());
 		return n;
