@@ -1,8 +1,4 @@
-//4:58:00
-//1:35:00
-//2:00:00
-//0:30:00
-//0:20:00
+//9:45:00
 
 //TODO
 //Seperate screen for virus development?
@@ -13,6 +9,8 @@
 //Score
 //Input data (numbers) to genes
 //Only allow viruses to enter cells that aren't already infected
+//Turn dead genes into NONE genes instead of stopping
+//random chance of gene decaying/losing health
 
 //DONE???????!?
 //waste removal ///??????
@@ -48,13 +46,16 @@ public class Main extends PApplet {
 	private int framesSinceLastTick = 0;
 	public int targetCells = 30;
 	public boolean paused = false;
+	private boolean mainMenu = true;
+	private boolean virusCreate = false;
+	private boolean cellView = false;
 			
 	public static void main(String[] args) {
 		PApplet.main("com.cospox.idek.Main");
 	}
 	
 	public void settings() {
-		size(800, 800, P2D);
+		size(800, 800, P3D);
 	}
 	
 	public void setup() {
@@ -64,7 +65,6 @@ public class Main extends PApplet {
 		cells.add(new Cell(new PVector(100, 100), new PVector(100, 100), this));
 		for (int i = 0; i < 100; i++)
 			waste.add(new Waste(new PVector(random(boundry.x), random(boundry.y)), PVector.random2D().mult(0.8f)));
-
 	}
 	
 	public void addCell(Cell c) {
@@ -76,6 +76,38 @@ public class Main extends PApplet {
 	//}
 	
 	public void draw() {
+		if (cellView) drawCellView();
+		if (mainMenu) drawMainMenu();
+		if (virusCreate) drawVirusCreate();
+	}
+	
+	private void drawMainMenu() {
+		background(255);
+		stroke(0);
+		noFill();
+		rect(width/2 - width/2*0.8f - 10, 200, width/2 * 0.8f, 100);
+		rect(width/2 + 10, 200, width/2 * 0.8f, 100);
+		textSize(50);
+		text("Create Virus", width/2 - width/2*0.8f - 10 + (width/2 * 0.8f / 2 - textWidth("Create Virus")/2), 250);
+		text("How to play ", width/2 + 10 + (width/2 * 0.8f / 2 - textWidth("How to play")/2), 250);
+		fill(0);
+		textSize(70);
+		text("Unnamed Virus Game", width / 2 - textWidth("Unnamed Virus game") / 2, 100);
+		textSize(11.5f);
+	}
+	
+	private void drawVirusCreate() {
+		this.hud.draw();
+	}
+	
+	private boolean clickInside(int mx, int my, float x, float y, float w, float h) {
+		return (mx > x &&
+			mx < x + w &&
+			my > y &&
+			my < y + h);		
+	}
+	
+	private void drawCellView() {
 		background(255);
 		noFill();
 		stroke(0);
@@ -106,9 +138,6 @@ public class Main extends PApplet {
 			}
 			if (++pos >= waste.size()) break;
 		}
-		//pushMatrix();
-		//translate(this.translate.x, this.translate.y);
-		//scale(zoom);
 		for (Cell c: cells) {
 			if (!paused) c.update(this, new ArrayList<ColidableCircle>(cells));
 			c.draw(this, cam);
@@ -147,11 +176,19 @@ public class Main extends PApplet {
 			cellsToAdd.clear();
 		}
 		this.hud.draw();
-		//popMatrix();
 	}
 	
 	public void mousePressed() {
 		if (this.hud.click(mouseX, mouseY)) return;
+		if (clickInside(mouseX, mouseY, width/2 - width/2*0.8f - 10, 200, width/2 * 0.8f, 100)) {
+			//create virus
+			//temporarily, show cell view
+			cellView = true;
+			mainMenu = false;
+		}
+		if (clickInside(mouseX, mouseY, width/2 + 10, 200, width/2 * 0.8f, 100)) {
+			
+		}
 		/*
 		for (Cell c: cells) {
 			if (c.isInside(mouseX, mouseY, cam)) {

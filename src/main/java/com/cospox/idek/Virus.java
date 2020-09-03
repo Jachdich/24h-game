@@ -38,4 +38,8 @@ public class Virus extends ColidableCircle {
 	public void die() {
 		this.dead = true;
 	}
+
+	public void setGenes(ArrayList<Gene> genes2) {
+		this.genes = genes2;
+	}
 }

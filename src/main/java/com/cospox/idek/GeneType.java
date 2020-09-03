@@ -9,6 +9,7 @@ public enum GeneType {
 	GENE_TO_RNA('R'),
 	RNA_TO_GENE('I'),
 	DIVIDE_UNTIL('D'),
+	MAKE_VIRUS('V'),
 	REMOVE_WASTE('W');
 	private final char letter;
 	
@@ -30,6 +31,7 @@ public enum GeneType {
 		case PRODUCE_ATP:			  return new int[]{0xFF000000, 0xFFFFFF00};
 		case REPAIR_MEMBRANE:         return new int[]{0xFFFFFFFF, 0xFF2222FF};
 		case REMOVE_WASTE:            return new int[]{0xFFFFFFFF, 0xFF804000};
+		case MAKE_VIRUS:              return new int[]{0xFFFFFFFF, 0xFFFFA000};
 		default:                      return new int[]{0xFFFFFFFF, 0xFF000000};
 		}
 	}
