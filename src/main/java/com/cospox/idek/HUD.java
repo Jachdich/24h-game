@@ -6,7 +6,7 @@ import processing.core.PVector;
 
 public class HUD {
 	private Main parent;
-	private Virus virus = null;
+	Virus virus = null;
 	private Gene selectedGene = null;
 	private Integer selectedData = null;
 	private String textBuffer = "";
@@ -17,9 +17,9 @@ public class HUD {
 	public void draw() {
 		if (virus != null) {
 			parent.noStroke();
-			parent.fill(128);
-			parent.rect(0, 0, 120 * 3 + 20 * 2, PApplet.max(virus.getGenes().size(), GeneType.values().length)
-					* 30 + 30 * 3);
+			//parent.fill(128);
+			//parent.rect(0, 0, 120 * 3 + 20 * 2, PApplet.max(virus.getGenes().size(), GeneType.values().length)
+			//		* 30 + 30 * 3);
 			int y = 30;
 			for (Gene g : virus.getGenes()) {
 				parent.fill(g.getType().getColour()[1]);
@@ -97,10 +97,6 @@ public class HUD {
 	}
 
 	public boolean click(int mouseX, int mouseY) {
-		if (mouseX < 10 && mouseY < 10) {
-			this.virus = new Virus(new PVector(Main.boundry.x / 2, Main.boundry.y / 2));
-			return true;
-		}
 		if (this.virus == null) return false;
 		if (mouseX > 20 + 120 * 2 && mouseX < (20 + 120 * 3) && this.selectedGene != null) {
 			if (mouseY > 30) {
@@ -146,9 +142,12 @@ public class HUD {
 			//release
 			this.parent.viruses.add(this.virus);
 			this.virus = null;
+			this.parent.cellView = true;
+			this.parent.virusCreate = false;
 			return true;
 		} else if (mouseY > y + 40 + 15 && mouseY < y + 40 + 15*2 && mouseX > 20 && mouseX < 20 + 120) {
 			//add data
+			if (this.selectedGene == null) return true;
 			if (this.selectedGene.getData().size() >= 3) return true;
 			this.selectedGene.getData().add(0);
 			this.selectedData = this.selectedGene.getData().size() - 1;

@@ -26,8 +26,7 @@ public class ColidableCircle {
 				if (c instanceof Cell) {
 					((Cell)c).membraneHealth -= 0.1;
 					if (this instanceof Virus) {
-						((Cell)c).getNucleus().merge(((Virus)this).getGenes());
-						((Virus)this).die();
+						((Cell)c).infect((Virus)this);//((Cell)c).getNucleus().merge(((Virus)this).getGenes());
 					}
 				}
 				if (!collide) return;

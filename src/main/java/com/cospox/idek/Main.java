@@ -1,16 +1,22 @@
 //9:45:00
+//0:20:00
+//0:15:00
+//0:20:00
 
 //TODO
 //Seperate screen for virus development?
-//Initial configuration of cells
-//settings
+//render genes correctly even if there's only 2 or 1
+//settings?
 //tutorial
-//title screen
+//Better title screen
 //Score
-//Only allow viruses to enter cells that aren't already infected
+//Improve hash function
 
 //DONE???????!?
 //only remove waste if it's not in a cell ///?????
+//Initial configuration of cells
+//Only allow viruses to enter cells that aren't already infected
+
 
 //BUGS
 //Waste can get trapped "inside" a cell wall causing the cell to die
@@ -40,11 +46,12 @@ public class Main extends PApplet {
 	private Cam cam;
 	private HUD hud;
 	private int framesSinceLastTick = 0;
-	public int targetCells = 30;
+	public int targetCells = 24;
 	public boolean paused = false;
 	private boolean mainMenu = true;
-	private boolean virusCreate = false;
-	private boolean cellView = false;
+	boolean virusCreate = false;
+	boolean cellView = false;
+	public int score = 0;
 			
 	public static void main(String[] args) {
 		PApplet.main("com.cospox.idek.Main");
@@ -58,7 +65,30 @@ public class Main extends PApplet {
 		smooth();
 		cam = new Cam();
 		hud = new HUD(this);
-		cells.add(new Cell(new PVector(100, 100), new PVector(100, 100), this));
+		PVector cellPos[] = {
+				new PVector(100, 100),
+				new PVector(100, 200),
+				new PVector(200, 100),
+				new PVector(200, 200),
+				
+				new PVector(boundry.x - 100, 100),
+				new PVector(boundry.x - 100, 200),
+				new PVector(boundry.x - 200, 100),
+				new PVector(boundry.x - 200, 200),
+				
+				new PVector(100, boundry.y - 100),
+				new PVector(100, boundry.y - 200),
+				new PVector(200, boundry.y - 100),
+				new PVector(200, boundry.y - 200),
+				
+				new PVector(boundry.x - 100, boundry.y - 100),
+				new PVector(boundry.x - 100, boundry.y - 200),
+				new PVector(boundry.x - 200, boundry.y - 100),
+				new PVector(boundry.x - 200, boundry.y - 200),
+		};
+		for (PVector p : cellPos) {
+			cells.add(new Cell(p, p, this));
+		}
 		for (int i = 0; i < 100; i++)
 			waste.add(new Waste(new PVector(random(boundry.x), random(boundry.y)), PVector.random2D().mult(0.8f)));
 	}
@@ -93,6 +123,7 @@ public class Main extends PApplet {
 	}
 	
 	private void drawVirusCreate() {
+		background(200);
 		this.hud.draw();
 	}
 	
@@ -110,7 +141,7 @@ public class Main extends PApplet {
 		rect(cam.translate.x, cam.translate.y, boundry.x * cam.zoom, boundry.y * cam.zoom);
 		fill(0);
 		text(frameRate, 10, 10);
-		text(waste.size(), 70, 10);
+		text(score, 70, 10);
 		//if (frameRate < 100000) return;
 		for (int i = food.size(); i < food_target; i++) {
 			food.add(new Food(new PVector(random(boundry.x), random(boundry.y)), PVector.random2D().mult(0.8f)));
@@ -171,7 +202,7 @@ public class Main extends PApplet {
 			}
 			cellsToAdd.clear();
 		}
-		this.hud.draw();
+//		this.hud.draw();
 	}
 	
 	public void mousePressed() {
@@ -179,7 +210,9 @@ public class Main extends PApplet {
 		if (clickInside(mouseX, mouseY, width/2 - width/2*0.8f - 10, 200, width/2 * 0.8f, 100)) {
 			//create virus
 			//temporarily, show cell view
-			cellView = true;
+			//cellView = true;
+			this.hud.virus = new Virus(new PVector(Main.boundry.x / 2, Main.boundry.y / 2));
+			virusCreate = true;
 			mainMenu = false;
 		}
 		if (clickInside(mouseX, mouseY, width/2 + 10, 200, width/2 * 0.8f, 100)) {

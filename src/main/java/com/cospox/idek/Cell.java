@@ -14,6 +14,7 @@ public class Cell extends ColidableCircle {
 	private Nucleus nucleus;
 	Main parent;
 	public RNA rna = null;
+	private ArrayList<Long> infectedBy = new ArrayList<Long>();
 	
 	public Cell(PVector pos, PVector moveTo, Main parent) {
 		this.pos = pos;
@@ -22,12 +23,23 @@ public class Cell extends ColidableCircle {
 		this.parent = parent;
 	}
 	
+	public void infect(Virus virus) {
+		if (infectedBy.contains(virus.hash())) {
+			return;
+		}
+		infectedBy.add(virus.hash());
+		this.nucleus.merge(virus.getGenes());
+		virus.die();
+		parent.score += 100;
+	}
+	
 	public void draw(PApplet applet, Cam cam) {
 		if (this.rna != null) {
 			this.rna.draw(applet, cam);
 		}
 		if (this.membraneHealth < 0) {
 			this.parent.kill(this);
+			this.parent.score += 50;
 			return;
 		}
 		float scx = getPos().x * cam.zoom + cam.translate.x;

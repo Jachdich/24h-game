@@ -142,6 +142,7 @@ public class Nucleus {
 			}
 			this.parent.rna = null;
 			this.parent.parent.viruses.add(v);
+			this.parent.parent.score += 150;
 		}
 			
 		default:
