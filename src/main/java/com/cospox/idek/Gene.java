@@ -58,8 +58,12 @@ public class Gene {
 		  applet.vertex(x, y);
 		  applet.endShape(PConstants.CLOSE);
 	}
-
+	
 	public void draw(PApplet applet, PVector pos, float height, float angle, int n, Cam cam) {
+		draw(applet, pos, height, angle, n, cam, 20);
+	}
+
+	public void draw(PApplet applet, PVector pos, float height, float angle, int n, Cam cam, int rad) {
 		applet.pushMatrix();
 		applet.translate(pos.x * cam.zoom + cam.translate.x, pos.y * cam.zoom + cam.translate.y);
 		applet.fill(getActualColour(getType().getColour()[1]));
@@ -68,7 +72,7 @@ public class Gene {
 			applet.strokeWeight(cam.zoom);
 		}
 		for (int i = 0; i < data.size() + 1; i++) {
-			draw_thing(applet, (20 - width + width * i) * cam.zoom, (20 + width * i) * cam.zoom, angle, n);
+			draw_thing(applet, (rad - width + width * i) * cam.zoom, (rad + width * i) * cam.zoom, angle, n);
 		}
 		applet.stroke(0);
 		applet.strokeWeight(1);

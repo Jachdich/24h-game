@@ -15,7 +15,7 @@ public class ColidableCircle {
 		applet.circle(pos.x * cam.zoom + cam.translate.x, pos.y * cam.zoom + cam.translate.y, rad * 2 * cam.zoom);
 	}
 	
-	public void update(PApplet applet, ArrayList<ColidableCircle> objs, boolean collide) {
+	public void update(Main applet, ArrayList<ColidableCircle> objs, boolean collide) {
 		this.pos.add(PVector.div(this.vel, applet.frameRate / 60));
 		epsilon = 1 / (applet.frameRate / 60);
 		for (ColidableCircle c : objs) {
@@ -23,9 +23,20 @@ public class ColidableCircle {
 			double distance = Math.pow(c.getPos().x - pos.x, 2) + Math.pow(c.getPos().y - pos.y, 2);
 			if (distance > Math.pow(c.getRad() + rad - epsilon/2, 2) &&
 					distance < Math.pow(c.getRad() + rad + epsilon/2, 2)) {
+				if (c instanceof RNA && this instanceof VirusShell) {
+					VirusShell s = (VirusShell)this;
+					RNA r = (RNA)c;
+					Virus v = new Virus(s.pos);
+					v.vel = s.vel;
+					v.setGenes(r.genes);
+					s.die();
+					r.die();
+					applet.viruses.add(v);
+				}
 				if (c instanceof Cell) {
 					((Cell)c).membraneHealth -= 0.1;
 					if (this instanceof Virus) {
+						((Cell)c).membraneHealth -= 0.2;
 						((Cell)c).infect((Virus)this);//((Cell)c).getNucleus().merge(((Virus)this).getGenes());
 					}
 				}

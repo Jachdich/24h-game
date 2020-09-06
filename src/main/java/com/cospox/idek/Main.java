@@ -1,22 +1,11 @@
-//9:45:00
-//0:20:00
-//0:15:00
-//0:20:00
-
+//10:40:00
+//02:10:00
+//00:10:00
 //TODO
-//Seperate screen for virus development?
-//render genes correctly even if there's only 2 or 1
 //settings?
 //tutorial
 //Better title screen
-//Score
-//Improve hash function
-
-//DONE???????!?
-//only remove waste if it's not in a cell ///?????
-//Initial configuration of cells
-//Only allow viruses to enter cells that aren't already infected
-
+//Score for both gamemodes
 
 //BUGS
 //Waste can get trapped "inside" a cell wall causing the cell to die
@@ -50,7 +39,12 @@ public class Main extends PApplet {
 	public boolean paused = false;
 	private boolean mainMenu = true;
 	boolean virusCreate = false;
+	boolean cellCreate = false;
 	boolean cellView = false;
+	boolean offenceMenu = false;
+	boolean defenceMenu = false;
+	
+	boolean offenceMode = false;
 	public int score = 0;
 			
 	public static void main(String[] args) {
@@ -65,6 +59,16 @@ public class Main extends PApplet {
 		smooth();
 		cam = new Cam();
 		hud = new HUD(this);
+		//placeInitialCells(new ArrayList<Gene>());
+		for (int i = 0; i < 100; i++)
+			waste.add(new Waste(new PVector(random(boundry.x), random(boundry.y)), PVector.random2D().mult(0.8f)));
+	}
+	
+	public void addCell(Cell c) {
+		cellsToAdd.add(c);
+	}
+	
+	public void placeInitialCells(ArrayList<Gene> genes) {
 		PVector cellPos[] = {
 				new PVector(100, 100),
 				new PVector(100, 200),
@@ -87,14 +91,10 @@ public class Main extends PApplet {
 				new PVector(boundry.x - 200, boundry.y - 200),
 		};
 		for (PVector p : cellPos) {
-			cells.add(new Cell(p, p, this));
+			Cell c = new Cell(p, p, this);
+			c.getNucleus().setGenesCopy(genes);
+			this.cells.add(c);
 		}
-		for (int i = 0; i < 100; i++)
-			waste.add(new Waste(new PVector(random(boundry.x), random(boundry.y)), PVector.random2D().mult(0.8f)));
-	}
-	
-	public void addCell(Cell c) {
-		cellsToAdd.add(c);
 	}
 	
 	//public void strokeWeight(float n) {
@@ -103,19 +103,22 @@ public class Main extends PApplet {
 	
 	public void draw() {
 		if (cellView) drawCellView();
-		if (mainMenu) drawMainMenu();
+		if (mainMenu) drawATitleScreen("Defence mode", "Offence mode");
+		if (offenceMenu) drawATitleScreen("Make a virus", "How to play");
+		if (defenceMenu) drawATitleScreen("Make a cell", "How to play");
 		if (virusCreate) drawVirusCreate();
+		if (cellCreate) drawVirusCreate();
 	}
 	
-	private void drawMainMenu() {
+	private void drawATitleScreen(String buttonA, String buttonB) {
 		background(255);
 		stroke(0);
 		noFill();
 		rect(width/2 - width/2*0.8f - 10, 200, width/2 * 0.8f, 100);
 		rect(width/2 + 10, 200, width/2 * 0.8f, 100);
 		textSize(50);
-		text("Create Virus", width/2 - width/2*0.8f - 10 + (width/2 * 0.8f / 2 - textWidth("Create Virus")/2), 250);
-		text("How to play ", width/2 + 10 + (width/2 * 0.8f / 2 - textWidth("How to play")/2), 250);
+		text(buttonA, width/2 - width/2*0.8f - 10 + (width/2 * 0.8f / 2 - textWidth(buttonA)/2), 250);
+		text(buttonB, width/2 + 10 + (width/2 * 0.8f / 2 - textWidth(buttonB)/2), 250);
 		fill(0);
 		textSize(70);
 		text("Unnamed Virus Game", width / 2 - textWidth("Unnamed Virus game") / 2, 100);
@@ -211,12 +214,35 @@ public class Main extends PApplet {
 			//create virus
 			//temporarily, show cell view
 			//cellView = true;
-			this.hud.virus = new Virus(new PVector(Main.boundry.x / 2, Main.boundry.y / 2));
-			virusCreate = true;
-			mainMenu = false;
+			//virusCreate = true;
+			if (mainMenu) {
+				mainMenu = false;
+				defenceMenu = true;
+			}
+			else if (offenceMenu) {
+				offenceMenu = false;
+				virusCreate = true;
+				this.hud.virus = new Virus(new PVector(Main.boundry.x / 2, Main.boundry.y / 2));
+			}
+			else if (defenceMenu) {
+				defenceMenu = false;
+				cellCreate = true;
+				this.hud.cell = new Cell(new PVector(Main.boundry.x / 2, Main.boundry.y / 2), new PVector(Main.boundry.x / 2, Main.boundry.y / 2), this);
+			}
+			
+			//mainMenu = false;
 		}
 		if (clickInside(mouseX, mouseY, width/2 + 10, 200, width/2 * 0.8f, 100)) {
-			
+			if (mainMenu) {
+				mainMenu = false;
+				offenceMenu = true;
+			}
+			else if (offenceMenu) {
+				//offence tutorial
+			}
+			else if (defenceMenu) {
+				//defence tutorial
+			}
 		}
 		/*
 		for (Cell c: cells) {

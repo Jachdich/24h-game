@@ -8,18 +8,27 @@ import processing.core.PConstants;
 import processing.core.PVector;
 
 public class Nucleus {
+	public static final ArrayList<Gene> DEFAULT_GENOME = new ArrayList<Gene>(Arrays.asList(
+			new Gene(GeneType.DIVIDE_UNTIL),
+			new Gene(GeneType.PRODUCE_ATP),
+			new Gene(GeneType.REMOVE_WASTE),
+			new Gene(GeneType.REPAIR_MEMBRANE),
+			new Gene(GeneType.GENE_TO_RNA, new ArrayList<>(Arrays.asList(-4, 2))),
+			new Gene(GeneType.RNA_TO_GENE, new ArrayList<>(Arrays.asList(-5, 1))),
+			new Gene(GeneType.REPAIR_MEMBRANE)));
+	
 	private int headPos = 0;
-	public static float mutationChance = 3.0f;
+	public static float mutationChance = 1.0f;
 	Cell parent;
 	private ArrayList<Gene> genes = new ArrayList<Gene>();
 	public Nucleus(Cell parent) {
-		getGenes().add(new Gene(GeneType.DIVIDE_UNTIL));
-		getGenes().add(new Gene(GeneType.PRODUCE_ATP));
-		getGenes().add(new Gene(GeneType.REMOVE_WASTE));
-		getGenes().add(new Gene(GeneType.REPAIR_MEMBRANE));
-		getGenes().add(new Gene(GeneType.GENE_TO_RNA, new ArrayList<>(Arrays.asList(-4, 2))));
-		getGenes().add(new Gene(GeneType.RNA_TO_GENE, new ArrayList<>(Arrays.asList(-5, 1))));
-		getGenes().add(new Gene(GeneType.REPAIR_MEMBRANE));
+//		getGenes().add(new Gene(GeneType.DIVIDE_UNTIL));
+//		getGenes().add(new Gene(GeneType.PRODUCE_ATP));
+//		getGenes().add(new Gene(GeneType.REMOVE_WASTE));
+//		getGenes().add(new Gene(GeneType.REPAIR_MEMBRANE));
+//		getGenes().add(new Gene(GeneType.GENE_TO_RNA, new ArrayList<>(Arrays.asList(-4, 2))));
+//		getGenes().add(new Gene(GeneType.RNA_TO_GENE, new ArrayList<>(Arrays.asList(-5, 1))));
+//		getGenes().add(new Gene(GeneType.REPAIR_MEMBRANE));
 		this.parent = parent;
 
 	}
@@ -62,15 +71,16 @@ public class Nucleus {
 			for (int i = startPos; i < endPos + 1; i++) {
 				newGenes.add(getGenes().get(i).copy());
 			}
-			this.parent.rna = new RNA(newGenes);
-			this.parent.rna.pos = this.parent.getPos().copy().add(PVector.random2D().mult(4));
-			this.parent.rna.vel = PVector.random2D();
+			RNA rna = new RNA(newGenes, this.parent);
+			rna.pos = this.parent.getPos().copy().add(PVector.random2D().mult(4));
+			rna.vel = PVector.random2D();
+			this.parent.rna.add(rna);
 			break;
 		}
 		case RNA_TO_GENE:
 			this.parent.energy -= 0.1f;
 			
-			if (this.parent.rna != null) {
+			if (this.parent.rna.size() > 0) {
 				ArrayList<Integer> data = getGenes().get(headPos).getData();
 				int startPos = 0, endPos = 0;
 				     if (data.size() == 0) { startPos = 0; endPos = 0; }
@@ -78,7 +88,7 @@ public class Nucleus {
 				else if (data.size() >= 2) { startPos = data.get(0); endPos = data.get(1); }
 				int toRead = endPos - startPos;
 				int i = 0;
-				for (Gene g : this.parent.rna.genes) {
+				for (Gene g : this.parent.rna.get(this.parent.rna.size() - 1).genes) {
 					int a = (headPos + startPos + i);
 					if (a < 0) a = genes.size() + a;
 					if (a < 0) a = 0;
@@ -89,8 +99,8 @@ public class Nucleus {
 					i++;
 				}
 				getGenes().get(headPos).select();
+				this.parent.rna.remove(this.parent.rna.size() - 1);
 			}
-			this.parent.rna = null;
 			break;
 		case PRODUCE_ATP: {
 			Food eat = null;
@@ -133,16 +143,19 @@ public class Nucleus {
 			break;
 		}
 		
-		case MAKE_VIRUS: {
+		case MAKE_VIRUS_SHELL: {
+			/*
 			Virus v = new Virus(this.parent.pos.copy());
-			if (this.parent.rna != null) {
-				v.setGenes(this.parent.rna.genes);
+			if (this.parent.rna.size() > 0) {
+				v.setGenes(this.parent.rna.get(this.parent.rna.size() - 1).genes);
 			} else {
 				v.setGenes(new ArrayList<Gene>());
 			}
-			this.parent.rna = null;
+			this.parent.rna.remove(this.parent.rna.size() - 1);
 			this.parent.parent.viruses.add(v);
-			this.parent.parent.score += 150;
+			this.parent.parent.score += 150;*/
+			this.parent.shells.add(new VirusShell(this.parent, this.parent.pos.copy()));
+			break;
 		}
 			
 		default:
@@ -218,6 +231,13 @@ public class Nucleus {
 
 	public void setGenes(ArrayList<Gene> genes) {
 		this.genes = genes;
+	}
+	
+	public void setGenesCopy(ArrayList<Gene> genes) {
+		this.genes.clear();
+		for (Gene g : genes) {
+			this.genes.add(g.copy());
+		}
 	}
 
 }

@@ -13,7 +13,10 @@ public class Cell extends ColidableCircle {
 	float energy = 10.0f;
 	private Nucleus nucleus;
 	Main parent;
-	public RNA rna = null;
+	public ArrayList<RNA> rna = new ArrayList<RNA>();
+	public ArrayList<VirusShell> shells = new ArrayList<VirusShell>();
+	public ArrayList<RNA> rnaToRemove = new ArrayList<RNA>();
+	public ArrayList<VirusShell> shellsToRemove = new ArrayList<VirusShell>();
 	private ArrayList<Long> infectedBy = new ArrayList<Long>();
 	
 	public Cell(PVector pos, PVector moveTo, Main parent) {
@@ -33,10 +36,30 @@ public class Cell extends ColidableCircle {
 		parent.score += 100;
 	}
 	
-	public void draw(PApplet applet, Cam cam) {
-		if (this.rna != null) {
-			this.rna.draw(applet, cam);
+	public void draw(Main applet, Cam cam) {
+		for (RNA r : this.rna) {
+			r.draw(applet, cam);
+			ArrayList<ColidableCircle> objs = new ArrayList<ColidableCircle>(applet.cells);
+			objs.addAll(this.shells);
+			r.update(applet, objs, true);
 		}
+		for (RNA r : this.rnaToRemove) {
+			this.rna.remove(r);
+		}
+		this.rnaToRemove.clear();
+		for (VirusShell s : this.shells) {
+			s.draw(applet, cam);
+			ArrayList<ColidableCircle> objs = new ArrayList<ColidableCircle>(applet.cells);
+			objs.addAll(this.rna);
+			objs.addAll(this.shells);
+			s.update(applet, objs, true);
+		}
+		for (VirusShell s : this.shellsToRemove) {
+			this.shells.remove(s);
+		}
+		this.shellsToRemove.clear();
+	
+		
 		if (this.membraneHealth < 0) {
 			this.parent.kill(this);
 			this.parent.score += 50;
@@ -63,12 +86,12 @@ public class Cell extends ColidableCircle {
 		applet.strokeWeight(1);
 	}
 	
-	public void update(PApplet applet, ArrayList<ColidableCircle> objs) {
+	public void update(Main applet, ArrayList<ColidableCircle> objs) {
 		if (this.pos != this.moveTo) { 
 			this.pos.add(PVector.sub(moveTo, pos).div(30));
 		}
-		if (this.rna != null) {
-			this.rna.update(applet, objs, true);
+		for (RNA r : this.rna) {
+			r.update(applet, objs, true);
 		}
 	}
 	
