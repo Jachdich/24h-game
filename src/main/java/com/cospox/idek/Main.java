@@ -1,6 +1,8 @@
 //10:40:00
 //02:10:00
 //00:10:00
+//00:40:00
+
 //TODO
 //settings?
 //tutorial
@@ -17,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import processing.core.PApplet;
+import processing.core.PImage;
 import processing.core.PVector;
 import processing.event.MouseEvent;
 
@@ -44,6 +47,12 @@ public class Main extends PApplet {
 	boolean offenceMenu = false;
 	boolean defenceMenu = false;
 	
+	boolean offenceTutorial = false;
+	boolean defenceTutorial = false;
+	int slide = 0;
+	PImage[] offenceSlides;
+	PImage[] defenceSlides;
+	
 	boolean offenceMode = false;
 	public int score = 0;
 			
@@ -56,6 +65,20 @@ public class Main extends PApplet {
 	}
 	
 	public void setup() {
+		defenceSlides = new PImage[10];
+		offenceSlides = new PImage[10];
+		defenceSlides[0] = loadImage("defence0.png");
+		defenceSlides[1] = loadImage("defence1.png");
+		defenceSlides[2] = loadImage("defence2.png");
+		defenceSlides[3] = loadImage("defence3.png");
+		defenceSlides[4] = loadImage("defence4.png");
+		defenceSlides[5] = loadImage("defence5.png");
+		defenceSlides[6] = loadImage("defence6.png");
+		defenceSlides[7] = loadImage("defence7.png");
+		defenceSlides[8] = loadImage("defence8.png");
+		defenceSlides[9] = loadImage("defence9.png");
+		
+		
 		smooth();
 		cam = new Cam();
 		hud = new HUD(this);
@@ -108,6 +131,14 @@ public class Main extends PApplet {
 		if (defenceMenu) drawATitleScreen("Make a cell", "How to play");
 		if (virusCreate) drawVirusCreate();
 		if (cellCreate) drawVirusCreate();
+		if (defenceTutorial) {
+			if (slide >= defenceSlides.length) {
+				defenceTutorial = false;
+				defenceMenu = true;
+				return;
+			}
+			image(defenceSlides[slide], 0, 0);
+		}
 	}
 	
 	private void drawATitleScreen(String buttonA, String buttonB) {
@@ -209,6 +240,7 @@ public class Main extends PApplet {
 	}
 	
 	public void mousePressed() {
+		if (defenceTutorial || offenceTutorial) slide++;
 		if (this.hud.click(mouseX, mouseY)) return;
 		if (clickInside(mouseX, mouseY, width/2 - width/2*0.8f - 10, 200, width/2 * 0.8f, 100)) {
 			//create virus
@@ -238,10 +270,12 @@ public class Main extends PApplet {
 				offenceMenu = true;
 			}
 			else if (offenceMenu) {
-				//offence tutorial
+				offenceTutorial = true;
+				offenceMenu = false;
 			}
 			else if (defenceMenu) {
-				//defence tutorial
+				defenceTutorial = true;
+				defenceMenu = false;
 			}
 		}
 		/*
