@@ -65,19 +65,13 @@ public class Main extends PApplet {
 	}
 	
 	public void setup() {
-		defenceSlides = new PImage[10];
+		defenceSlides = new PImage[5];
 		offenceSlides = new PImage[10];
 		defenceSlides[0] = loadImage("defence0.png");
 		defenceSlides[1] = loadImage("defence1.png");
 		defenceSlides[2] = loadImage("defence2.png");
 		defenceSlides[3] = loadImage("defence3.png");
 		defenceSlides[4] = loadImage("defence4.png");
-		defenceSlides[5] = loadImage("defence5.png");
-		defenceSlides[6] = loadImage("defence6.png");
-		defenceSlides[7] = loadImage("defence7.png");
-		defenceSlides[8] = loadImage("defence8.png");
-		defenceSlides[9] = loadImage("defence9.png");
-		
 		
 		smooth();
 		cam = new Cam();
@@ -137,6 +131,7 @@ public class Main extends PApplet {
 				defenceMenu = true;
 				return;
 			}
+			background(200);
 			image(defenceSlides[slide], 0, 0);
 		}
 	}
